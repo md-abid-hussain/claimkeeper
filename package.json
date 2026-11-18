@@ -23,7 +23,8 @@
     "build": "tsc -p tsconfig.json && node -e \"require('fs').copyFileSync('README.md','plugin/README.md')\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test --test-timeout=60000 \"test/**/*.test.ts\"",
-    "validate": "claude plugin validate . && claude plugin validate ./plugin"
+    "validate": "claude plugin validate . && claude plugin validate ./plugin",
+    "icon": "node scripts/make-icon.mjs"
   },
   "devDependencies": {
     "@types/node": "24.19.2",

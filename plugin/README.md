@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/md-abid-hussain/claimkeeper/main/plugin/.claude-plugin/icon.png" width="96" alt="claimkeeper icon: a document with a check badge">
+
 # claimkeeper
 
 **Keep what your product says about itself consistent — across the README, docs, landing page, pitch text, demo script, voiceover, SVGs and the demo video — while coding agents keep changing things.**
