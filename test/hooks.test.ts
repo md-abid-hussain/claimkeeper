@@ -45,6 +45,16 @@ describe("hooks", () => {
     assert.match(to, /^….*plus a debug log/);
   });
 
+  test("a meaning change in the same millisecond as session start is still reported", (t) => {
+    init();
+    t.mock.timers.enable({ apis: ["Date"], now: Date.parse("2026-11-18T12:00:00.000Z") }); // frozen clock: everything happens at once
+    sessionStart({ session_id: sid, source: "startup" });
+    ops.updateClaim(store, { claim: "on-device", desc: "Audio is processed on-device; summaries sync to the cloud.", decidedBy: "user", why: "user: add sync" });
+    const out = stop({ session_id: sid }) as { decision?: string; reason?: string };
+    assert.match(out.reason!, /Meaning changed[\s\S]*on-device/);
+    assert.equal(stop({ session_id: sid }), undefined, "reported once");
+  });
+
   test("silent when the project never ran init (opt-in)", () => {
     assert.equal(sessionStart({ session_id: sid }), undefined);
     assert.equal(postToolUse({ session_id: sid, tool_name: "Read", tool_input: { file_path: join(p.root, "README.md") } }), undefined);

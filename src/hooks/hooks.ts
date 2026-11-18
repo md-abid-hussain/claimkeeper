@@ -41,6 +41,11 @@ interface Session {
   /** Per-edit warnings already given (same state is not repeated). */
   warned: string[];
   lastStop?: string;
+  /**
+   * Each claim's revision at session start / last Stop. Meaning changes are found by revision,
+   * not by timestamp: a change made in the same millisecond as the session start still counts.
+   */
+  revs?: Record<string, number>;
 }
 
 export type HookOutput = Record<string, unknown> | undefined;
@@ -56,6 +61,10 @@ function openStore(input: HookInput): Store | undefined {
 }
 
 const freshSession = (): Session => ({ started: new Date().toISOString(), known: [], hinted: [], warned: [] });
+
+function currentRevs(store: Store): Record<string, number> {
+  return Object.fromEntries(store.claimIds().map((id) => [id, store.getClaim(id).rev]));
+}
 
 /** Normalize a session read from disk (older versions may lack fields). */
 function fill(s: Partial<Session>): Session {
@@ -108,9 +117,10 @@ export function sessionStart(input: HookInput): HookOutput {
     if (resume) {
       // issues that appeared between sessions (hand edits) are known, not new: don't block on them
       s.known = [...new Set([...s.known, ...keys])];
+      s.revs ??= currentRevs(store);
       if (input.source === "compact") s.hinted = []; // the agent lost its context: hint again
     } else {
-      Object.assign(s, freshSession(), { known: keys });
+      Object.assign(s, freshSession(), { known: keys, revs: currentRevs(store) });
     }
   });
   refreshState(store);
@@ -272,14 +282,17 @@ export function stop(input: HookInput): HookOutput {
   const res = ops.check(store);
   const keys = ops.issueKeys(res);
   let since = "";
+  let baseline: Record<string, number> | undefined;
   let fresh = new Set<string>();
   updateSession(store, input, (s) => {
     since = s.lastStop ?? s.started;
+    baseline = s.revs;
     const known = new Set(s.known);
     fresh = new Set(keys.filter((k) => !known.has(k)));
     // remember only what is open now: an issue that gets fixed and later breaks again is new again
     s.known = keys;
     s.lastStop = new Date().toISOString();
+    s.revs = currentRevs(store);
   });
   const older = keys.length - fresh.size;
   refreshState(store);
@@ -287,7 +300,10 @@ export function stop(input: HookInput): HookOutput {
   const meaning: string[] = [];
   for (const id of store.claimIds()) {
     const c = store.getClaim(id);
-    if (c.history.some((h) => h.rev === c.rev && h.at > since) && c.history.length > 1) {
+    // by revision when the session recorded them (claims created since started at rev 1);
+    // sessions from older versions fall back to timestamps
+    const changed = baseline ? c.rev > (baseline[id] ?? 1) : c.history.some((h) => h.rev === c.rev && h.at > since);
+    if (changed && c.history.length > 1) {
       const prev = c.history.filter((h) => h.rev < c.rev).pop();
       const [from, to] = diffClip(prev?.desc ?? "", c.desc, 70);
       const cur = c.history.find((h) => h.rev === c.rev);
