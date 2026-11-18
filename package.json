@@ -20,7 +20,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && node -e \"require('fs').copyFileSync('README.md','plugin/README.md')\"",
+    "build": "tsc -p tsconfig.json && node -e \"const f=require('fs');f.copyFileSync('README.md','plugin/README.md');f.copyFileSync('LICENSE','plugin/LICENSE')\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test --test-timeout=60000 \"test/**/*.test.ts\"",
     "validate": "claude plugin validate . && claude plugin validate ./plugin",

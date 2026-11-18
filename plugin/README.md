@@ -133,6 +133,10 @@ A repo you clone or pull can ship its own `.claims/` folder, so claimkeeper trea
 - **The opt-in debug log redacts** file contents, edits, commands and command output.
 - No runtime dependencies; `npm audit` is clean. Regression tests for each of these live in `test/security.test.ts`.
 
+## Privacy
+
+claimkeeper makes no network requests and sends nothing anywhere: no telemetry, no external services. Everything it stores stays in your project: the claims in `.claims/` (committed with your repo unless you use `--private`) and your personal settings, session state and activity log in the git-ignored `.claims/local/`. It never stores secrets (see Security).
+
 ## Tools (MCP)
 
 | Tool | Purpose |

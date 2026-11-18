@@ -1,0 +1,30 @@
+{
+  "id": "no-network",
+  "desc": "claimkeeper makes no network requests and sends no data anywhere: everything it stores stays in the project.",
+  "keywords": [
+    "network",
+    "telemetry",
+    "privacy",
+    "sends nothing"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "claimkeeper makes no network requests and sends no data anywhere: everything it stores stays in the project.",
+      "at": "2026-11-18T16:11:12.611Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Privacy section",
+      "anchor": "claimkeeper makes no network requests and sends nothing anywhere: no telemetry, no external services.",
+      "line": 138
+    }
+  ],
+  "next": 2
+}
