@@ -1,0 +1,58 @@
+{
+  "id": "regen-chain",
+  "desc": "Generated outputs remember what they were made from; when an input changes the output is reported as needing regeneration, and this chains through outputs (script → audio → video).",
+  "keywords": [
+    "needs_regen",
+    "chained",
+    "chains",
+    "made from"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Generated outputs remember what they were made from; when an input changes the output is reported as needing regeneration, and this chains through outputs (script → audio → video).",
+      "at": "2026-11-18T06:51:28.248Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "intro bullet",
+      "anchor": "(ElevenLabs audio, SVG exports, Remotion renders) remember what they were made from",
+      "line": 11
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "What it catches table",
+      "anchor": "Audio `needs_regen` → the video that uses it `needs_regen` too (chained)",
+      "line": 25
+    },
+    {
+      "id": "m5",
+      "kind": "text",
+      "path": "plugin/skills/claims/references/media.md",
+      "rev": 1,
+      "note": "media reference rules",
+      "anchor": "An input change marks the output `needs_regen`, and it chains: script → audio → video.",
+      "line": 15
+    },
+    {
+      "id": "m6",
+      "kind": "code",
+      "path": "src/mcp/tools.ts",
+      "rev": 1,
+      "note": "output tool description",
+      "anchor": "with the inputs it was made from; it is then flagged when an input or claim meaning changes.",
+      "line": 214,
+      "block": "24b11df0d219"
+    }
+  ],
+  "next": 7
+}

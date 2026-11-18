@@ -1,0 +1,27 @@
+{
+  "description": "claimkeeper: silent unless the project ran claimkeeper init and tracking is on",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/dist/cli.js\" hook session-start", "timeout": 15 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Read|Write|Edit|MultiEdit|NotebookEdit|Bash|mcp__.*([Ee]leven|speech|tts|voice|audio|sound|music|image|video|render|generate).*",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/dist/cli.js\" hook post-tool-use", "timeout": 15 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/dist/cli.js\" hook stop", "timeout": 30 }
+        ]
+      }
+    ]
+  }
+}

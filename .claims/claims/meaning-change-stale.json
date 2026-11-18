@@ -1,0 +1,109 @@
+{
+  "id": "meaning-change-stale",
+  "desc": "Changing a claim's meaning bumps its revision; every place and generated output not updated for the new meaning is reported STALE, the agent must tell the user, and claim_update revert brings an earlier meaning back.",
+  "keywords": [
+    "stale",
+    "revision",
+    "meaning",
+    "revert"
+  ],
+  "rev": 2,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Changing a claim's meaning bumps its revision; every place and generated output not updated for the new meaning is reported STALE, the agent must tell the user, and claim_revert brings an earlier meaning back.",
+      "at": "2026-11-18T06:51:29.445Z"
+    },
+    {
+      "rev": 2,
+      "desc": "Changing a claim's meaning bumps its revision; every place and generated output not updated for the new meaning is reported STALE, the agent must tell the user, and claim_update revert brings an earlier meaning back.",
+      "at": "2026-11-18T13:55:38.053Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "anchor": "Revision bump; every place and output not updated is `STALE`; the agent must tell you",
+      "line": 23,
+      "note": "What it catches table"
+    },
+    {
+      "id": "m4",
+      "kind": "code",
+      "path": "src/mcp/tools.ts",
+      "rev": 2,
+      "anchor": "desc = new MEANING, only on the user's decision (decided_by + why required; bumps revision; unconfirmed places/outputs go stale; tell the user).",
+      "line": 188,
+      "block": "4a5f4747841f",
+      "note": "claim_update tool description"
+    },
+    {
+      "id": "m5",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "anchor": "`claim_update revert` — places written for that meaning are consistent again",
+      "line": 27,
+      "note": "What it catches table"
+    },
+    {
+      "id": "m6",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "anchor": "Rewording keeps the revision; a meaning change bumps it, marks unconfirmed places and outputs stale, and the agent tells you.",
+      "line": 150,
+      "note": "Rules section"
+    },
+    {
+      "id": "m7",
+      "kind": "text",
+      "path": "plugin/skills/claims/SKILL.md",
+      "rev": 2,
+      "anchor": "then **tell the user in 1-2 lines** what changed and what is now stale",
+      "line": 15,
+      "note": "claims skill step 4"
+    },
+    {
+      "id": "m8",
+      "kind": "text",
+      "path": "plugin/skills/claims/references/meaning.md",
+      "rev": 2,
+      "anchor": "If the user wants the old meaning back: `claim_update {claim, revert: <rev>, decided_by: \"user\", why}`.",
+      "line": 28,
+      "note": "meaning reference: revert"
+    },
+    {
+      "id": "m9",
+      "kind": "text",
+      "path": "plugin/skills/claims/references/media.md",
+      "rev": 2,
+      "anchor": "A meaning change marks outputs `stale` unless their inputs were reconfirmed for the new meaning.",
+      "line": 16,
+      "note": "media reference rules"
+    },
+    {
+      "id": "m10",
+      "kind": "code",
+      "path": "src/core/format.ts",
+      "rev": 2,
+      "anchor": "parts.push(\"If the user wants the earlier meaning back: claim_update {claim, revert: <rev>}.",
+      "line": 122,
+      "block": "2d5a4869b50d",
+      "note": "claim_update result text"
+    },
+    {
+      "id": "m11",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "anchor": "new meaning (`desc`), `revert`, `remove`; per place: `text`, `accept`, `ack`, `relink`, `remove`",
+      "line": 131,
+      "note": "Tools table: claim_update"
+    }
+  ],
+  "next": 12
+}

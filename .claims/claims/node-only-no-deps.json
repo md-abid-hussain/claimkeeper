@@ -1,0 +1,75 @@
+{
+  "id": "node-only-no-deps",
+  "desc": "claimkeeper needs only Node.js 22 or newer: it has no runtime dependencies, and its MCP server is implemented directly without an SDK.",
+  "keywords": [
+    "node.js",
+    "dependencies",
+    "no sdk"
+  ],
+  "rev": 4,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "claimkeeper needs only Node.js 20 or newer: it has no runtime dependencies, and its MCP server is implemented directly without an SDK.",
+      "at": "2026-11-18T06:51:31.772Z"
+    },
+    {
+      "rev": 2,
+      "desc": "claimkeeper needs only Node.js 24 or newer: it has no runtime dependencies, and its MCP server is implemented directly without an SDK.",
+      "at": "2026-11-18T13:55:34.789Z"
+    },
+    {
+      "rev": 3,
+      "desc": "claimkeeper needs only Node.js 24.22.1 or newer (the first 24.x with the October 2026 Node security fixes): it has no runtime dependencies, and its MCP server is implemented directly without an SDK.",
+      "at": "2026-11-18T14:39:49.417Z"
+    },
+    {
+      "rev": 4,
+      "desc": "claimkeeper needs only Node.js 22 or newer: it has no runtime dependencies, and its MCP server is implemented directly without an SDK.",
+      "at": "2026-11-18T15:59:03.461Z",
+      "by": "user_request",
+      "why": "user feedback: requiring Node 24.22.1+ is a real barrier to adoption, since many projects target Node 22"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 4,
+      "anchor": "Requires Node.js 22 or newer (tested on 22 and 24; development uses 24). No runtime dependencies.",
+      "line": 33,
+      "note": "Install section"
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 4,
+      "anchor": "`src/mcp` the stdio MCP server (no SDK)",
+      "line": 187,
+      "note": "Development section"
+    },
+    {
+      "id": "m5",
+      "kind": "code",
+      "path": "src/mcp/server.ts",
+      "rev": 4,
+      "anchor": "Minimal MCP server over stdio (newline-delimited JSON-RPC 2.0). No dependencies.",
+      "line": 1,
+      "block": "03eb81df38ed",
+      "note": "code: MCP server header"
+    },
+    {
+      "id": "m6",
+      "kind": "code",
+      "path": "package.json",
+      "rev": 4,
+      "anchor": "\"node\": \">=22\"",
+      "line": 14,
+      "block": "5cababeb48a2",
+      "note": "engines field"
+    }
+  ],
+  "next": 7
+}

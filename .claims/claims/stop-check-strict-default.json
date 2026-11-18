@@ -1,0 +1,81 @@
+{
+  "id": "stop-check-strict-default",
+  "desc": "By default (strict) the end-of-turn check blocks once on each new claim problem or meaning change, so the agent fixes or acknowledges it before finishing; problems that existed when the session started don't block, and relaxed mode only reports.",
+  "keywords": [
+    "strict",
+    "relaxed",
+    "block",
+    "new problems"
+  ],
+  "rev": 2,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "By default (strict) the end-of-turn check makes the agent fix or acknowledge claim problems before finishing; relaxed mode only reports them.",
+      "at": "2026-11-18T06:51:26.217Z"
+    },
+    {
+      "rev": 2,
+      "desc": "By default (strict) the end-of-turn check blocks once on each new claim problem or meaning change, so the agent fixes or acknowledges it before finishing; problems that existed when the session started don't block, and relaxed mode only reports.",
+      "at": "2026-11-18T13:55:40.055Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "note": "toggle relaxed line",
+      "anchor": "report problems at the end of a turn, don't block",
+      "line": 58
+    },
+    {
+      "id": "m6",
+      "kind": "code",
+      "path": "src/core/store.ts",
+      "rev": 2,
+      "note": "code: default stop mode",
+      "anchor": "stop: \"block\",",
+      "line": 10,
+      "block": "fc4702276ea6"
+    },
+    {
+      "id": "m7",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "note": "toggle strict line",
+      "anchor": "fix or acknowledge new problems before finishing (default)",
+      "line": 59
+    },
+    {
+      "id": "m8",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "note": "How it runs table: Stop",
+      "anchor": "new problems and meaning changes block once (strict) or are reported (relaxed)",
+      "line": 101
+    },
+    {
+      "id": "m9",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "note": "Context budget table: end of turn",
+      "anchor": "only **new** problems or meaning changes, top 5; blocks at most once each",
+      "line": 89
+    },
+    {
+      "id": "m10",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "note": "How it runs table: SessionStart",
+      "anchor": "snapshots existing issues so only new ones block later",
+      "line": 97
+    }
+  ],
+  "next": 11
+}

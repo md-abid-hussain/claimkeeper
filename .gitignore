@@ -1,0 +1,5 @@
+node_modules/
+*.tmp
+# personal, machine-specific Claude Code settings (local install paths)
+.claude/
+# plugin/dist is committed on purpose: the plugin runs without a build step

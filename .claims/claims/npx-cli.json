@@ -1,0 +1,37 @@
+{
+  "id": "npx-cli",
+  "desc": "claimkeeper is not published to npm yet, so `npx claimkeeper` is not available in other projects; the CLI runs from a checkout (plugin/dist/cli.js) until it is published.",
+  "keywords": [
+    "npx",
+    "npm"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "claimkeeper is not published to npm yet, so `npx claimkeeper` is not available in other projects; the CLI runs from a checkout (plugin/dist/cli.js) until it is published.",
+      "at": "2026-11-18T06:51:34.933Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m3",
+      "kind": "text",
+      "path": "ROADMAP.md",
+      "rev": 1,
+      "note": "roadmap: not published yet",
+      "anchor": "Publish to npm so `npx claimkeeper` works without a checkout.",
+      "line": 16
+    },
+    {
+      "id": "m4",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "CLI section",
+      "anchor": "Not on npm yet: run it from a checkout with `node <checkout>/plugin/dist/cli.js`.",
+      "line": 135
+    }
+  ],
+  "next": 5
+}

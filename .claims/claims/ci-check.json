@@ -1,0 +1,38 @@
+{
+  "id": "ci-check",
+  "desc": "`claimkeeper check --ci` exits with code 1 when anything needs attention, so it can gate CI or commits.",
+  "keywords": [
+    "--ci",
+    "exit 1"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "`claimkeeper check --ci` exits with code 1 when anything needs attention, so it can gate CI or commits.",
+      "at": "2026-11-18T14:17:14.980Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "CLI section",
+      "anchor": "check --ci     # exit 1 if anything needs attention",
+      "line": 141
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": "src/cli.ts",
+      "rev": 1,
+      "note": "CLI help",
+      "anchor": "(--ci: exit 1 if anything)",
+      "line": 21,
+      "block": "bfd323d0a1a9"
+    }
+  ],
+  "next": 3
+}

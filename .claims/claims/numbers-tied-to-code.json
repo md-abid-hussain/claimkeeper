@@ -1,0 +1,49 @@
+{
+  "id": "numbers-tied-to-code",
+  "desc": "A claim that states a number gets the code constant that sets it as a place, and claims with numbers but no code place are listed, so a changed constant flags the docs.",
+  "keywords": [
+    "numbers",
+    "constant",
+    "code place",
+    "max_repeats"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "A claim that states a number gets the code constant that sets it as a place, and claims with numbers but no code place are listed, so a changed constant flags the docs.",
+      "at": "2026-11-18T15:59:03.607Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "anchor": "**Numbers are tied to code.**",
+      "line": 165,
+      "note": "Rules"
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "plugin/agents/claim-scout.md",
+      "rev": 1,
+      "anchor": "**Every number, limit or count gets its code place.**",
+      "line": 18,
+      "note": "scout"
+    },
+    {
+      "id": "m3",
+      "kind": "code",
+      "path": "src/core/ops.ts",
+      "rev": 1,
+      "anchor": "export function isUnbackedNumber(store: Store, claim: Claim): boolean {",
+      "line": 557,
+      "block": "8941b7b0497e",
+      "note": "detection"
+    }
+  ],
+  "next": 4
+}

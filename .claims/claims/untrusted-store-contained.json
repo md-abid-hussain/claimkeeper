@@ -1,0 +1,79 @@
+{
+  "id": "untrusted-store-contained",
+  "desc": "claimkeeper treats a repo's .claims folder as untrusted: it never reads or writes outside the project (no absolute paths, .. or links leading out), never tracks the store or .git, keeps claim text single-line so it cannot impersonate claimkeeper, and never lets a config remove the built-in secret exclusions.",
+  "keywords": [
+    "untrusted",
+    "contained",
+    "outside the project",
+    "symlink",
+    "unsafe_path"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "claimkeeper treats a repo's .claims folder as untrusted: it never reads or writes outside the project (no absolute paths, .. or links leading out), never tracks the store or .git, keeps claim text single-line so it cannot impersonate claimkeeper, and never lets a config remove the built-in secret exclusions.",
+      "at": "2026-11-18T14:40:37.960Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Security section intro",
+      "anchor": "A repo you clone or pull can ship its own `.claims/` folder, so claimkeeper treats the store as untrusted input:",
+      "line": 124
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Security: paths",
+      "anchor": "Anything else is reported as `unsafe_path` and never read or written.",
+      "line": 126
+    },
+    {
+      "id": "m3",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Security: secret exclusions",
+      "anchor": "A project config can add exclusions, never remove the built-in ones",
+      "line": 129
+    },
+    {
+      "id": "m4",
+      "kind": "code",
+      "path": "src/core/project.ts",
+      "rev": 1,
+      "note": "absPath doc",
+      "anchor": "Store files can come from an untrusted repo, so every path is contained:",
+      "line": 51,
+      "block": "c6c71e006c67"
+    },
+    {
+      "id": "m5",
+      "kind": "code",
+      "path": "src/core/store.ts",
+      "rev": 1,
+      "note": "config merge",
+      "anchor": "configs (possibly from an untrusted repo) can add exclusions, never remove the built-in ones",
+      "line": 94,
+      "block": "41d782fcd3b5"
+    },
+    {
+      "id": "m6",
+      "kind": "code",
+      "path": "src/core/text.ts",
+      "rev": 1,
+      "note": "oneLine doc",
+      "anchor": "Store text can come from an untrusted repo and is shown to the agent: keep it on one line,",
+      "line": 290,
+      "block": "2500b61157d0"
+    }
+  ],
+  "next": 7
+}

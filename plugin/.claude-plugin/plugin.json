@@ -1,0 +1,10 @@
+{
+  "name": "claimkeeper",
+  "version": "0.3.0",
+  "description": "Keep product claims consistent across README, docs, landing page, pitch text, scripts, SVGs, voiceovers and demo videos as coding agents change things. Opt-in per project.",
+  "author": { "name": "claimkeeper contributors" },
+  "license": "MIT",
+  "homepage": "https://github.com/md-abid-hussain/claimkeeper",
+  "repository": "https://github.com/md-abid-hussain/claimkeeper",
+  "keywords": ["docs", "consistency", "claims", "hackathon", "demo-video", "remotion", "elevenlabs"]
+}

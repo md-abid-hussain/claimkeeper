@@ -1,0 +1,39 @@
+{
+  "id": "pinned-deps",
+  "desc": "Dependencies are pinned to exact versions, and new installs keep them exact.",
+  "keywords": [
+    "pinned",
+    "exact versions",
+    "save-exact"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Dependencies are pinned to exact versions, and new installs keep them exact.",
+      "at": "2026-11-18T14:17:15.115Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Development",
+      "anchor": "Dependencies are pinned to exact versions.",
+      "line": 172
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": ".npmrc",
+      "rev": 1,
+      "note": "npm config",
+      "anchor": "save-exact=true",
+      "line": 1,
+      "block": "c71388d46e52"
+    }
+  ],
+  "next": 3
+}

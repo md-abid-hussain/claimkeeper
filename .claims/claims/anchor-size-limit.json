@@ -1,0 +1,59 @@
+{
+  "id": "anchor-size-limit",
+  "desc": "Only short anchor wording (10 to 500 characters per place) is stored, so the store grows with the number of claims, not the size of the codebase.",
+  "keywords": [
+    "500 chars",
+    "anchor wording",
+    "10-500"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Only short anchor wording (10 to 500 characters per place) is stored, so the store grows with the number of claims, not the size of the codebase.",
+      "at": "2026-11-18T06:51:34.178Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m4",
+      "kind": "code",
+      "path": "src/core/ops.ts",
+      "rev": 1,
+      "note": "code: max anchor",
+      "anchor": "const MAX_ANCHOR = 500;",
+      "line": 38,
+      "block": "afde4a90a699"
+    },
+    {
+      "id": "m5",
+      "kind": "code",
+      "path": "src/core/store.ts",
+      "rev": 1,
+      "note": "code: min anchor default",
+      "anchor": "minAnchor: 10,",
+      "line": 12,
+      "block": "58962e7b3708"
+    },
+    {
+      "id": "m6",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Storage section",
+      "anchor": "Only short anchor wording is stored (≤ 500 chars per place): the store grows with the number of claims, not the codebase.",
+      "line": 118
+    },
+    {
+      "id": "m7",
+      "kind": "code",
+      "path": "src/mcp/tools.ts",
+      "rev": 1,
+      "note": "claim_add mention schema",
+      "anchor": "Exact wording of the claim in that file, 10-500 chars.",
+      "line": 55,
+      "block": "74e6873a06b7"
+    }
+  ],
+  "next": 8
+}

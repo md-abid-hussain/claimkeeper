@@ -1,0 +1,40 @@
+{
+  "id": "robust-relocation",
+  "desc": "Registered wording is still found after lines move, text reflows or gets wrapped in tags (exact, then normalized, then fuzzy matching), without raising false alarms.",
+  "keywords": [
+    "fuzzy",
+    "normalized",
+    "false alarms",
+    "reflowed"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Registered wording is still found after lines move, text reflows or gets wrapped in tags (exact, then normalized, then fuzzy matching), without raising false alarms.",
+      "at": "2026-11-18T06:51:26.996Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "What it catches table",
+      "anchor": "Found anyway (exact → normalized → fuzzy). No false alarms.",
+      "line": 19
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": "src/core/text.ts",
+      "rev": 1,
+      "note": "code: matcher docstring",
+      "anchor": "exact -> normalized (ignores whitespace, tags, markdown, case, quotes) -> fuzzy (token overlap).",
+      "line": 3,
+      "block": "4758b9aa6a4b"
+    }
+  ],
+  "next": 3
+}

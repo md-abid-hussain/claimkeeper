@@ -1,0 +1,6 @@
+{
+  "name": "claimkeeper-plugin",
+  "private": true,
+  "type": "module",
+  "description": "Marks plugin/dist as ES modules, so the plugin runs the same wherever it is installed."
+}

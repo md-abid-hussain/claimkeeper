@@ -1,0 +1,38 @@
+{
+  "id": "hooks-never-break-session",
+  "desc": "Hook errors are swallowed, so claim tracking never breaks or blocks a Claude Code session because of its own failures.",
+  "keywords": [
+    "errors are swallowed",
+    "never breaks a session"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Hook errors are swallowed, so claim tracking never breaks or blocks a Claude Code session because of its own failures.",
+      "at": "2026-11-18T14:17:14.826Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "How it runs",
+      "anchor": "Errors are swallowed; claim tracking never breaks a session.",
+      "line": 104
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": "src/hooks/hooks.ts",
+      "rev": 1,
+      "note": "hooks module header",
+      "anchor": "claim tracking never breaks a session.",
+      "line": 8,
+      "block": "648862bd4559"
+    }
+  ],
+  "next": 3
+}

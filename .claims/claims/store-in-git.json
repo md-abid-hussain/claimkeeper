@@ -1,0 +1,82 @@
+{
+  "id": "store-in-git",
+  "desc": "The .claims/ store is committed to git by default; .claims/local/ is always git-ignored and holds places and outputs in ignored files, personal settings, session state, the activity log and the status cache; init --private keeps the whole store out of git.",
+  "keywords": [
+    "git",
+    "committed",
+    "--private",
+    "local/"
+  ],
+  "rev": 2,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "The .claims/ store is committed to git by default; .claims/local/ is always git-ignored and holds mentions and outputs in ignored files, personal settings and session state; init --private keeps the whole store out of git.",
+      "at": "2026-11-18T06:51:35.988Z"
+    },
+    {
+      "rev": 2,
+      "desc": "The .claims/ store is committed to git by default; .claims/local/ is always git-ignored and holds places and outputs in ignored files, personal settings, session state, the activity log and the status cache; init --private keeps the whole store out of git.",
+      "at": "2026-11-18T13:55:41.484Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m5",
+      "kind": "code",
+      "path": "src/core/store.ts",
+      "rev": 2,
+      "note": "code: default share",
+      "anchor": "share: true,",
+      "line": 9,
+      "block": "dbbec951d83a"
+    },
+    {
+      "id": "m6",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "note": "Storage tree, local/ is git-ignored",
+      "anchor": "git-ignored: places/outputs in ignored files (e.g. out/*.mp4),",
+      "line": 112
+    },
+    {
+      "id": "m7",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "note": "Storage tree, local/ contents",
+      "anchor": "personal settings, session state, activity.log, state.json",
+      "line": 113
+    },
+    {
+      "id": "m8",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "note": "Storage section",
+      "anchor": "Places in files git ignores go to `local/` automatically, since nobody else has those files.",
+      "line": 116
+    },
+    {
+      "id": "m9",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "note": "Storage section",
+      "anchor": "`/claimkeeper:init --private` keeps the whole store out of git.",
+      "line": 117
+    },
+    {
+      "id": "m10",
+      "kind": "code",
+      "path": "src/mcp/tools.ts",
+      "rev": 2,
+      "note": "claims_config tool description",
+      "anchor": "turn it on for this project (.claims/, committed unless share=false)",
+      "line": 81,
+      "block": "99bca9a68ec0"
+    }
+  ],
+  "next": 11
+}

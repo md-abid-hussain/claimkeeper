@@ -1,0 +1,32 @@
+{
+  "name": "claimkeeper",
+  "version": "0.3.0",
+  "description": "Keep product claims consistent across docs, landing pages, pitch text, scripts, SVGs, voiceovers and demo videos while coding agents change things.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/md-abid-hussain/claimkeeper.git"
+  },
+  "homepage": "https://github.com/md-abid-hussain/claimkeeper#readme",
+  "bugs": "https://github.com/md-abid-hussain/claimkeeper/issues",
+  "type": "module",
+  "bin": {
+    "claimkeeper": "plugin/dist/cli.js"
+  },
+  "files": [
+    "plugin"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node -e \"require('fs').copyFileSync('README.md','plugin/README.md')\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test --test-timeout=60000 \"test/**/*.test.ts\"",
+    "validate": "claude plugin validate . && claude plugin validate ./plugin"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
+  }
+}

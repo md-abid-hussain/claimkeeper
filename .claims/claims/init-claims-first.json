@@ -1,0 +1,40 @@
+{
+  "id": "init-claims-first",
+  "desc": "In a new project, init asks the user for the 3-7 things the product must always say and registers them as claims before any files mention them.",
+  "keywords": [
+    "claims first",
+    "3-7",
+    "3–7",
+    "new project"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "In a new project, init asks the user for the 3-7 things the product must always say and registers them as claims before any files mention them.",
+      "at": "2026-11-18T14:17:14.907Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "anchor": "you name the 3–7 things the product must always say; they become the spec",
+      "line": 53,
+      "note": "Turn it on: new project"
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "plugin/skills/init/SKILL.md",
+      "rev": 1,
+      "anchor": "Ask the user for the 3-7 things the product must always say about itself",
+      "line": 16,
+      "note": "init skill"
+    }
+  ],
+  "next": 3,
+  "noCode": "a guideline in the setup instructions, not a setting"
+}

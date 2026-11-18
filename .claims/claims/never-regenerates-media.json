@@ -1,0 +1,86 @@
+{
+  "id": "never-regenerates-media",
+  "desc": "The agent never regenerates media (audio, video, images) on its own; it tells the user what is out of date and asks before regenerating.",
+  "keywords": [
+    "regenerate",
+    "regenerates",
+    "approval"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "The agent never regenerates media (audio, video, images) on its own; it tells the user what is out of date and asks before regenerating.",
+      "at": "2026-11-18T06:51:24.753Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "anchor": "The agent **never regenerates media on its own**. It tells you what's out of date and asks.",
+      "line": 29,
+      "note": "README promise"
+    },
+    {
+      "id": "m6",
+      "kind": "text",
+      "path": "plugin/skills/claims/SKILL.md",
+      "rev": 1,
+      "anchor": "**Never regenerate media** (audio, video, images) without the user's yes. Tell them what is out of date and why",
+      "line": 20,
+      "note": "claims skill hard rule"
+    },
+    {
+      "id": "m7",
+      "kind": "code",
+      "path": "src/mcp/server.ts",
+      "rev": 1,
+      "anchor": "Never regenerate media without the user's approval.",
+      "line": 72,
+      "block": "716a40b0b2cc",
+      "note": "MCP server instructions"
+    },
+    {
+      "id": "m8",
+      "kind": "code",
+      "path": "src/hooks/hooks.ts",
+      "rev": 1,
+      "anchor": "regenerate only with the user's approval.",
+      "line": 142,
+      "block": "64d13e3e21a6",
+      "note": "read hint for generated outputs"
+    },
+    {
+      "id": "m9",
+      "kind": "code",
+      "path": "src/mcp/tools.ts",
+      "rev": 1,
+      "anchor": "Never regenerate without the user's approval.",
+      "line": 214,
+      "block": "24b11df0d219",
+      "note": "output tool description"
+    },
+    {
+      "id": "m10",
+      "kind": "text",
+      "path": "plugin/skills/claims/references/media.md",
+      "rev": 1,
+      "anchor": "**Never regenerate without the user's yes** (costs credits and render time).",
+      "line": 17,
+      "note": "media reference rules"
+    },
+    {
+      "id": "m11",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "anchor": "Media is never regenerated without your yes; \"not now\" is acknowledged and stays listed as pending.",
+      "line": 151,
+      "note": "Rules section"
+    }
+  ],
+  "next": 12
+}

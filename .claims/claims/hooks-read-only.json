@@ -1,0 +1,51 @@
+{
+  "id": "hooks-read-only",
+  "desc": "Hooks never change claims, their places or outputs; they write only git-ignored local files under .claims/local/ (session state, the activity log and the status cache), plus a debug log at a path you choose only when CLAIMKEEPER_DEBUG is set.",
+  "keywords": [
+    "never change claims",
+    "git-ignored local files",
+    "session state",
+    "activity log",
+    "status cache"
+  ],
+  "rev": 3,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Hooks never change claims, mentions or outputs; the only thing they write is a git-ignored per-session file under .claims/local/.",
+      "at": "2026-11-18T06:51:32.932Z"
+    },
+    {
+      "rev": 2,
+      "desc": "Hooks never change claims, their places or outputs; they write only git-ignored local files under .claims/local/: session state, the activity log and the status cache.",
+      "at": "2026-11-18T13:55:36.331Z"
+    },
+    {
+      "rev": 3,
+      "desc": "Hooks never change claims, their places or outputs; they write only git-ignored local files under .claims/local/ (session state, the activity log and the status cache), plus a debug log at a path you choose only when CLAIMKEEPER_DEBUG is set.",
+      "at": "2026-11-18T14:16:33.155Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m3",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 3,
+      "note": "How it runs",
+      "anchor": "Hooks never change claims. They write only git-ignored local files: session state, the activity log and the status cache (plus a debug log, only if you set `CLAIMKEEPER_DEBUG`).",
+      "line": 103
+    },
+    {
+      "id": "m4",
+      "kind": "code",
+      "path": "src/hooks/hooks.ts",
+      "rev": 3,
+      "note": "code: hooks module header",
+      "anchor": "Hooks never change claims; they write only git-ignored local files (session state,",
+      "line": 6,
+      "block": "cadcb740cc21"
+    }
+  ],
+  "next": 5
+}

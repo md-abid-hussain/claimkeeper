@@ -1,0 +1,66 @@
+{
+  "id": "opt-in-per-project",
+  "desc": "Installing the plugin changes nothing; its hooks stay silent in a project until that project runs claimkeeper init and tracking is on.",
+  "keywords": [
+    "opt-in",
+    "installing does nothing",
+    "silent"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Installing the plugin changes nothing; its hooks stay silent in a project until that project runs claimkeeper init and tracking is on.",
+      "at": "2026-11-18T06:51:23.584Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "plugin/.claude-plugin/plugin.json",
+      "rev": 1,
+      "note": "manifest description",
+      "anchor": "Opt-in per project.",
+      "line": 4
+    },
+    {
+      "id": "m3",
+      "kind": "text",
+      "path": "plugin/hooks/hooks.json",
+      "rev": 1,
+      "note": "hooks.json description",
+      "anchor": "silent unless the project ran claimkeeper init and tracking is on",
+      "line": 2
+    },
+    {
+      "id": "m5",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Turn it on per project section",
+      "anchor": "Installing does nothing by itself; hooks stay silent until a project runs init.",
+      "line": 47
+    },
+    {
+      "id": "m6",
+      "kind": "code",
+      "path": "src/hooks/hooks.ts",
+      "rev": 1,
+      "note": "code: hooks get no store when uninitialized or tracking off",
+      "anchor": "return store?.config().enabled ? store : undefined;",
+      "line": 48,
+      "block": "d7fde6f52371"
+    },
+    {
+      "id": "m7",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Rules section",
+      "anchor": "Opt-in per project; off per user or per project.",
+      "line": 148
+    }
+  ],
+  "next": 8
+}

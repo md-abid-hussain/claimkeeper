@@ -1,0 +1,46 @@
+{
+  "outputs": [
+    {
+      "id": "plugin-readme",
+      "kind": "file",
+      "path": "plugin/README.md",
+      "inputs": [
+        {
+          "ref": "README.md",
+          "hash": "11718:e9f1c5a83ecd4953"
+        }
+      ],
+      "claims": {
+        "anchor-size-limit": 1,
+        "ci-check": 1,
+        "context-budget": 1,
+        "hooks-never-break-session": 1,
+        "hooks-read-only": 3,
+        "init-claims-first": 1,
+        "meaning-change-stale": 2,
+        "missing-files-not-fatal": 1,
+        "never-regenerates-media": 1,
+        "no-locking": 1,
+        "node-only-no-deps": 4,
+        "npx-cli": 1,
+        "numbers-tied-to-code": 1,
+        "opt-in-per-project": 1,
+        "pinned-deps": 1,
+        "product-purpose": 1,
+        "regen-chain": 1,
+        "robust-relocation": 1,
+        "scout-read-only": 1,
+        "secrets-refused": 1,
+        "stop-check-strict-default": 2,
+        "store-in-git": 2,
+        "untrusted-store-contained": 1,
+        "user-decides-meaning": 1
+      },
+      "fp": "11718:e9f1c5a83ecd4953",
+      "meta": {
+        "tool": "npm run build"
+      },
+      "at": "2026-11-18T16:06:53.145Z"
+    }
+  ]
+}

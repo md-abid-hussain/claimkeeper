@@ -1,0 +1,12 @@
+{
+  "name": "claimkeeper",
+  "owner": { "name": "claimkeeper contributors" },
+  "metadata": { "description": "claimkeeper: keep product claims consistent across docs, pages, scripts and media." },
+  "plugins": [
+    {
+      "name": "claimkeeper",
+      "source": "./plugin",
+      "description": "Keep product claims consistent across docs, pages, scripts, SVGs, voiceovers and demo videos."
+    }
+  ]
+}

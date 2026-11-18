@@ -1,0 +1,58 @@
+{
+  "id": "context-budget",
+  "desc": "claimkeeper keeps the agent's context small: always only a one-line skill description and 7 tool names, one session-start line, one hint line per claim-holding file read (once per session), a ~350-word core skill loaded on demand, and setup and audit in subagents.",
+  "keywords": [
+    "context",
+    "7 tool names",
+    "once per file per session",
+    "~350 words"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "claimkeeper keeps the agent's context small: always only a one-line skill description and 7 tool names, one session-start line, one hint line per claim-holding file read (once per session), a ~350-word core skill loaded on demand, and setup and audit in subagents.",
+      "at": "2026-11-18T14:17:14.862Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Context budget: always",
+      "anchor": "a one-line skill description; 7 tool names (schemas load on demand)",
+      "line": 86
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Context budget: read hint",
+      "anchor": "one line, once per file per session",
+      "line": 88
+    },
+    {
+      "id": "m3",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "Context budget: skill",
+      "anchor": "~350 words, loaded when product-facing text or media is touched",
+      "line": 91
+    },
+    {
+      "id": "m4",
+      "kind": "code",
+      "path": "src/mcp/tools.ts",
+      "rev": 1,
+      "note": "tools module header",
+      "anchor": "Seven MCP tools. Few tools, short descriptions, compact text output:",
+      "line": 2,
+      "block": "1dec8567b1b9"
+    }
+  ],
+  "next": 5
+}
