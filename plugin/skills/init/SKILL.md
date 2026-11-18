@@ -19,7 +19,7 @@ disable-model-invocation: true
 
 ## Existing project: discover in a subagent
 
-3. Delegate discovery to the `claim-scout` agent (Agent tool, plugin agent `claim-scout`). Pass it the project root and anything the user said about the product. It reads the files in its own context and returns a short proposal; do not read those files yourself.
+3. Delegate discovery to the `claim-scout` agent (Agent tool, plugin agent `claim-scout`). Pass it the project root and anything the user said about the product. It reads the files in its own context and returns a short proposal; do not read those files yourself. If your agent can't start subagents (or has no `claim-scout`), follow the instructions and output format in `agents/claim-scout.md` of the claimkeeper plugin yourself.
 4. Show the user the proposal as is (claims, where they appear, contradictions) and ask which to track and how to settle contradictions. Register nothing before they answer. Even if they approved everything up front, that approval covers which claims to track, not which side of a contradiction is true: ask about each contradiction, or register it with `conflict` and say so.
 5. Register the approved ones: one `claim_add` per claim with all its mentions, including the scout's `code` places for numbers (and look for the constant yourself if the scout found none). Contradictions the user has not settled get `conflict`: they wait for the user's decision and don't block the end of the turn. Settled ones: register, then `claim_update` edits with the new wording.
 6. If generated media exists and the user knows its sources, `output action=record` it.
@@ -27,3 +27,5 @@ disable-model-invocation: true
 ## Finish
 
 One or two lines: how many claims and places are tracked, and that `/claimkeeper:toggle off` turns the automatic checks off.
+
+If the project uses git, offer the pre-commit check (`node <claimkeeper>/plugin/dist/cli.js install-git-hook`): it blocks commits while tracked claims need attention. Recommend it when the agent doesn't run claimkeeper's hooks (anything other than Claude Code); install it only on the user's yes.

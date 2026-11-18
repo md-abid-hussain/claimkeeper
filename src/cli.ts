@@ -4,6 +4,8 @@ import { formatCheck, formatClaimViews, formatConfig, formatInFile, formatList, 
 import { readLog, statusText } from "./core/activity.ts";
 import * as ops from "./core/ops.ts";
 import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { installGitHook, uninstallGitHook } from "./core/githook.ts";
 import { defaultRoot, findRoot, projectRoot } from "./core/project.ts";
 import { Store } from "./core/store.ts";
 import { ClaimsError } from "./core/types.ts";
@@ -20,12 +22,16 @@ Usage:
   claimkeeper list                 all claims
   claimkeeper get <id...> [--context N]
   claimkeeper check [--ci]         what needs attention (--ci: exit 1 if anything)
+  claimkeeper install-git-hook     pre-commit check, for any agent (uninstall-git-hook removes it)
   claimkeeper in <path>            claims in a file, outputs built from it
   claimkeeper scan <path>          possible unregistered mentions in a file
   claimkeeper log [-n N]           what the agent and hooks did (activity log)
   claimkeeper statusline           one-line status for Claude Code's status line
   claimkeeper mcp                  run the MCP server (stdio)
   claimkeeper hook <session-start|post-tool-use|stop>   Claude Code hook entry
+
+Any command: --root <dir> (or CLAIMKEEPER_ROOT) sets the project, for agents that
+don't start the MCP server inside it.
 `;
 
 function flag(args: string[], name: string): boolean {
@@ -44,7 +50,10 @@ function option(args: string[], name: string): string | undefined {
 }
 
 async function main(argv: string[]): Promise<number> {
-  const [cmd, ...args] = argv;
+  const all = [...argv];
+  const root = option(all, "--root");
+  if (root) process.env.CLAIMKEEPER_ROOT = resolve(root);
+  const [cmd, ...args] = all;
   switch (cmd) {
     case "mcp":
       startServer();
@@ -90,9 +99,23 @@ async function main(argv: string[]): Promise<number> {
     }
     case "check": {
       const ci = flag(args, "--ci");
-      const res = ops.check(ops.requireStore(projectRoot()), { searchMissing: true });
+      const ifEnabled = flag(args, "--if-enabled");
+      const store = ops.requireStore(projectRoot());
+      if (ifEnabled && !store.config().enabled) {
+        console.log("claimkeeper: tracking is off, skipping the check");
+        return 0;
+      }
+      const res = ops.check(store, { searchMissing: true });
       console.log(formatCheck(res));
       return ci && (res.mentionIssues.length || res.outputIssues.length) ? 1 : 0;
+    }
+    case "install-git-hook":
+    case "uninstall-git-hook": {
+      const store = ops.requireStore(projectRoot());
+      const cli = fileURLToPath(import.meta.url);
+      const r = cmd === "install-git-hook" ? installGitHook(store.root, cli) : uninstallGitHook(store.root);
+      console.log(r.message);
+      return 0;
     }
     case "in":
       if (!args[0]) throw new ClaimsError("in needs a path");

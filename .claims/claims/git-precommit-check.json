@@ -1,0 +1,77 @@
+{
+  "id": "git-precommit-check",
+  "desc": "An optional git pre-commit check blocks commits while tracked claims need attention (bypass with --no-verify): it keeps any existing hook, prints the lines for hook managers instead of editing their files, respects tracking being off, and says so when claimkeeper's path is gone.",
+  "keywords": [
+    "pre-commit",
+    "git hook",
+    "install-git-hook",
+    "--no-verify"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "An optional git pre-commit check blocks commits while tracked claims need attention (bypass with --no-verify): it keeps any existing hook, prints the lines for hook managers instead of editing their files, respects tracking being off, and says so when claimkeeper's path is gone.",
+      "at": "2026-11-18T16:32:21.013Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "note": "INSTALL step 6",
+      "anchor": "it blocks a commit while tracked claims need attention (bypass once with `git commit --no-verify`)",
+      "line": 94
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "note": "INSTALL step 6",
+      "anchor": "It adds a marked block to `.git/hooks/pre-commit` and keeps any existing hook.",
+      "line": 100
+    },
+    {
+      "id": "m3",
+      "kind": "text",
+      "path": "plugin/skills/init/SKILL.md",
+      "rev": 1,
+      "note": "init skill",
+      "anchor": "it blocks commits while tracked claims need attention",
+      "line": 31
+    },
+    {
+      "id": "m4",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "CLI section",
+      "anchor": "node plugin/dist/cli.js install-git-hook   # pre-commit check (uninstall-git-hook removes it)",
+      "line": 169
+    },
+    {
+      "id": "m5",
+      "kind": "code",
+      "path": "src/cli.ts",
+      "rev": 1,
+      "note": "CLI help",
+      "anchor": "claimkeeper install-git-hook     pre-commit check, for any agent (uninstall-git-hook removes it)",
+      "line": 25,
+      "block": "1d67695e876a"
+    },
+    {
+      "id": "m6",
+      "kind": "code",
+      "path": "src/core/githook.ts",
+      "rev": 1,
+      "note": "the check the hook runs",
+      "anchor": "    '    CLAIMKEEPER_ROOT=\"$CK_ROOT\" node \"$CK_CLI\" check --ci --if-enabled || {',",
+      "line": 28,
+      "block": "11dc6ea8bce0"
+    }
+  ],
+  "next": 7
+}

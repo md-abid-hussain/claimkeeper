@@ -44,6 +44,12 @@ claude plugin install claimkeeper@claimkeeper
 
 Or try it from a checkout without installing: `claude --plugin-dir ./plugin`.
 
+**Codex, Cursor or another agent?** Any agent that can use MCP servers works. Tell it:
+
+> Install claimkeeper in this project by following https://github.com/md-abid-hussain/claimkeeper/blob/main/INSTALL.md
+
+[INSTALL.md](INSTALL.md) walks the agent through registering the MCP server, adding the instructions, turning tracking on and (with your yes) a git pre-commit check. Without Claude Code's hooks, the agent runs the checks itself as its instructions say, and the pre-commit check catches what slips through at commit time.
+
 ## Turn it on per project
 
 Installing does nothing by itself; hooks stay silent until a project runs init.
@@ -90,8 +96,8 @@ Everything the agent sees costs context, so claimkeeper discloses progressively:
 | Reading a file with claims | one line, once per file per session: `README.md holds claims: on-device l7 "…"` |
 | Writing claim wording / an output's input | only when something drifted or went stale |
 | End of turn | only **new** problems or meaning changes, top 5; blocks at most once each |
-| Claims skill | ~350 words, loaded when product-facing text or media is touched; media and meaning-change guidance in reference files read only when needed |
-| Setup and audit | run in subagents; only their short report enters the session |
+| Claims skill | under 500 words (a test enforces it), loaded when product-facing text or media is touched; media and meaning-change guidance in reference files read only when needed |
+| Setup and audit | in Claude Code, run in subagents: only their short report enters the session (other agents run them inline) |
 
 ## How it runs
 
@@ -160,6 +166,8 @@ node plugin/dist/cli.js check --ci     # exit 1 if anything needs attention
 node plugin/dist/cli.js get on-device
 node plugin/dist/cli.js in README.md
 node plugin/dist/cli.js log -n 50
+node plugin/dist/cli.js install-git-hook   # pre-commit check (uninstall-git-hook removes it)
+node plugin/dist/cli.js status --root ../my-app   # any command: --root or CLAIMKEEPER_ROOT picks the project
 ```
 
 ## Rules

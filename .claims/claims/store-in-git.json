@@ -26,57 +26,66 @@
       "kind": "code",
       "path": "src/core/store.ts",
       "rev": 2,
-      "note": "code: default share",
       "anchor": "share: true,",
       "line": 9,
-      "block": "dbbec951d83a"
+      "block": "dbbec951d83a",
+      "note": "code: default share"
     },
     {
       "id": "m6",
       "kind": "text",
       "path": "README.md",
       "rev": 2,
-      "note": "Storage tree, local/ is git-ignored",
       "anchor": "git-ignored: places/outputs in ignored files (e.g. out/*.mp4),",
-      "line": 112
+      "line": 112,
+      "note": "Storage tree, local/ is git-ignored"
     },
     {
       "id": "m7",
       "kind": "text",
       "path": "README.md",
       "rev": 2,
-      "note": "Storage tree, local/ contents",
       "anchor": "personal settings, session state, activity.log, state.json",
-      "line": 113
+      "line": 113,
+      "note": "Storage tree, local/ contents"
     },
     {
       "id": "m8",
       "kind": "text",
       "path": "README.md",
       "rev": 2,
-      "note": "Storage section",
       "anchor": "Places in files git ignores go to `local/` automatically, since nobody else has those files.",
-      "line": 116
+      "line": 116,
+      "note": "Storage section"
     },
     {
       "id": "m9",
       "kind": "text",
       "path": "README.md",
       "rev": 2,
-      "note": "Storage section",
       "anchor": "`/claimkeeper:init --private` keeps the whole store out of git.",
-      "line": 117
+      "line": 117,
+      "note": "Storage section"
     },
     {
       "id": "m10",
       "kind": "code",
       "path": "src/mcp/tools.ts",
       "rev": 2,
-      "note": "claims_config tool description",
       "anchor": "turn it on for this project (.claims/, committed unless share=false)",
       "line": 81,
-      "block": "99bca9a68ec0"
+      "block": "99bca9a68ec0",
+      "note": "claims_config tool description"
+    },
+    {
+      "id": "m11",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 2,
+      "note": "INSTALL step 5",
+      "anchor": "Add `--private` to keep the claim store out of git.",
+      "line": 90
     }
   ],
-  "next": 11
+  "next": 12
 }

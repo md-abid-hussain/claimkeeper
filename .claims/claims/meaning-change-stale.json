@@ -103,7 +103,16 @@
       "anchor": "new meaning (`desc`), `revert`, `remove`; per place: `text`, `accept`, `ack`, `relink`, `remove`",
       "line": 131,
       "note": "Tools table: claim_update"
+    },
+    {
+      "id": "m12",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 2,
+      "note": "INSTALL instructions block",
+      "anchor": "A meaning change only on the user's decision (`decided_by`, `why`); then tell the user what is now stale.",
+      "line": 75
     }
   ],
-  "next": 12
+  "next": 13
 }

@@ -15,9 +15,12 @@ export function findRoot(start) {
         dir = up;
     }
 }
-/** Project root to use when nothing is initialized yet. */
+/**
+ * Project root to use when nothing is initialized yet. CLAIMKEEPER_ROOT (or the CLI's --root)
+ * works with any agent; CLAUDE_PROJECT_DIR is what Claude Code sets; otherwise the cwd.
+ */
 export function defaultRoot() {
-    return resolve(process.env.CLAUDE_PROJECT_DIR || process.cwd());
+    return resolve(process.env.CLAIMKEEPER_ROOT || process.env.CLAUDE_PROJECT_DIR || process.cwd());
 }
 export function projectRoot() {
     const base = defaultRoot();

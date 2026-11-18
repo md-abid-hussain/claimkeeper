@@ -80,7 +80,16 @@
       "anchor": "Media is never regenerated without your yes; \"not now\" is acknowledged and stays listed as pending.",
       "line": 151,
       "note": "Rules section"
+    },
+    {
+      "id": "m12",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "note": "INSTALL instructions block",
+      "anchor": "Never regenerate media (audio, video, images) without the user's yes",
+      "line": 77
     }
   ],
-  "next": 12
+  "next": 13
 }

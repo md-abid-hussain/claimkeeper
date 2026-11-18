@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Claim audit
 
-1. Delegate the review to the `claim-auditor` agent (Agent tool, plugin agent `claim-auditor`), passing any claim ids from the arguments. It reads files in its own context and returns a short report; do not re-read them yourself.
+1. Delegate the review to the `claim-auditor` agent (Agent tool, plugin agent `claim-auditor`), passing any claim ids from the arguments. It reads files in its own context and returns a short report; do not re-read them yourself. If your agent can't start subagents (or has no `claim-auditor`), follow the steps and report format in `agents/claim-auditor.md` of the claimkeeper plugin yourself.
 
 2. Show the user the report: contradictions, stale media, unregistered claims, and the one-line "fine" count.
 

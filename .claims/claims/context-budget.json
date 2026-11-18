@@ -1,18 +1,25 @@
 {
   "id": "context-budget",
-  "desc": "claimkeeper keeps the agent's context small: always only a one-line skill description and 7 tool names, one session-start line, one hint line per claim-holding file read (once per session), a ~350-word core skill loaded on demand, and setup and audit in subagents.",
+  "desc": "claimkeeper keeps the agent's context small: always only a one-line skill description and 7 tool names, one session-start line, one hint line per claim-holding file read (once per session), a core skill under 500 words loaded on demand, and in Claude Code setup and audit in subagents.",
   "keywords": [
     "context",
     "7 tool names",
     "once per file per session",
     "~350 words"
   ],
-  "rev": 1,
+  "rev": 2,
   "history": [
     {
       "rev": 1,
       "desc": "claimkeeper keeps the agent's context small: always only a one-line skill description and 7 tool names, one session-start line, one hint line per claim-holding file read (once per session), a ~350-word core skill loaded on demand, and setup and audit in subagents.",
       "at": "2026-11-18T14:17:14.862Z"
+    },
+    {
+      "rev": 2,
+      "desc": "claimkeeper keeps the agent's context small: always only a one-line skill description and 7 tool names, one session-start line, one hint line per claim-holding file read (once per session), a core skill under 500 words loaded on demand, and in Claude Code setup and audit in subagents.",
+      "at": "2026-11-18T16:32:18.666Z",
+      "by": "user_request",
+      "why": "user: \"run claimkeeper audit and fixes if required\" (after asking for a general install for Codex/Cursor)"
     }
   ],
   "mentions": [
@@ -20,39 +27,77 @@
       "id": "m1",
       "kind": "text",
       "path": "README.md",
-      "rev": 1,
-      "note": "Context budget: always",
+      "rev": 2,
       "anchor": "a one-line skill description; 7 tool names (schemas load on demand)",
-      "line": 86
+      "line": 94,
+      "note": "Context budget: always"
     },
     {
       "id": "m2",
       "kind": "text",
       "path": "README.md",
-      "rev": 1,
-      "note": "Context budget: read hint",
+      "rev": 2,
       "anchor": "one line, once per file per session",
-      "line": 88
+      "line": 96,
+      "note": "Context budget: read hint"
     },
     {
       "id": "m3",
       "kind": "text",
       "path": "README.md",
-      "rev": 1,
-      "note": "Context budget: skill",
-      "anchor": "~350 words, loaded when product-facing text or media is touched",
-      "line": 91
+      "rev": 2,
+      "anchor": "| Claims skill | under 500 words (a test enforces it), loaded when product-facing text or media is touched; media and meaning-change guidance in reference files read only when needed |",
+      "line": 99,
+      "note": "Context budget: skill"
     },
     {
       "id": "m4",
       "kind": "code",
       "path": "src/mcp/tools.ts",
-      "rev": 1,
-      "note": "tools module header",
+      "rev": 2,
       "anchor": "Seven MCP tools. Few tools, short descriptions, compact text output:",
       "line": 2,
-      "block": "1dec8567b1b9"
+      "block": "1dec8567b1b9",
+      "note": "tools module header"
+    },
+    {
+      "id": "m5",
+      "kind": "code",
+      "path": "test/budget.test.ts",
+      "rev": 2,
+      "note": "skill word cap, enforced by test",
+      "anchor": "const MAX_CLAIMS_SKILL_WORDS = 500;",
+      "line": 8,
+      "block": "9ffb51218632"
+    },
+    {
+      "id": "m6",
+      "kind": "code",
+      "path": "test/budget.test.ts",
+      "rev": 2,
+      "note": "tool count, enforced by test",
+      "anchor": "const TOOL_COUNT = 7;",
+      "line": 9,
+      "block": "018a9204edfe"
+    },
+    {
+      "id": "m7",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 2,
+      "note": "Context budget: setup and audit",
+      "anchor": "in Claude Code, run in subagents: only their short report enters the session (other agents run them inline)",
+      "line": 100
+    },
+    {
+      "id": "m8",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 2,
+      "note": "INSTALL intro",
+      "anchor": "It is an MCP server (7 tools) plus instructions (skills).",
+      "line": 5
     }
   ],
-  "next": 5
+  "next": 9
 }

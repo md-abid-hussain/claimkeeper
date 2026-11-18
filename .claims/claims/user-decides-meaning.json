@@ -21,38 +21,56 @@
       "kind": "text",
       "path": "README.md",
       "rev": 1,
-      "note": "Rules",
       "anchor": "**Only you decide what the product promises.**",
-      "line": 164
+      "line": 164,
+      "note": "Rules"
     },
     {
       "id": "m2",
       "kind": "text",
       "path": "plugin/skills/claims/SKILL.md",
       "rev": 1,
-      "note": "claims skill",
       "anchor": "**Meaning change** (anything a reader would rely on changes: scope, number, condition, guarantee): only on the user's decision.",
-      "line": 15
+      "line": 15,
+      "note": "claims skill"
     },
     {
       "id": "m3",
       "kind": "text",
       "path": "plugin/skills/claims/SKILL.md",
       "rev": 1,
-      "note": "claims skill: conflicts",
       "anchor": "don't pick, even if one version looks obvious",
-      "line": 16
+      "line": 16,
+      "note": "claims skill: conflicts"
     },
     {
       "id": "m4",
       "kind": "code",
       "path": "src/core/ops.ts",
       "rev": 1,
-      "note": "enforcement",
       "anchor": "function decision(claim: Claim, to: string, decidedBy: string | undefined, why: string | undefined): { by: DecidedBy; why: string } {",
       "line": 464,
-      "block": "51faa04db5ef"
+      "block": "51faa04db5ef",
+      "note": "enforcement"
+    },
+    {
+      "id": "m5",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "note": "INSTALL instructions block",
+      "anchor": "A meaning change only on the user's decision (`decided_by`, `why`); then tell the user what is now stale.",
+      "line": 75
+    },
+    {
+      "id": "m6",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "note": "INSTALL instructions block",
+      "anchor": "Places disagree and the user hasn't decided: mark the place with `conflict` and ask; don't pick.",
+      "line": 76
     }
   ],
-  "next": 5
+  "next": 7
 }

@@ -49,7 +49,7 @@ const TAG = "[claimkeeper]";
 const TOP = 5;
 
 function openStore(input: HookInput): Store | undefined {
-  const root = findRoot(process.env.CLAUDE_PROJECT_DIR || input.cwd || process.cwd());
+  const root = findRoot(process.env.CLAIMKEEPER_ROOT || process.env.CLAUDE_PROJECT_DIR || input.cwd || process.cwd());
   if (!root) return undefined;
   const store = Store.open(root);
   return store?.config().enabled ? store : undefined;

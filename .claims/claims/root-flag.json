@@ -1,0 +1,49 @@
+{
+  "id": "root-flag",
+  "desc": "--root or CLAIMKEEPER_ROOT tells claimkeeper which project to use, so the MCP server and CLI work whatever the agent's working directory.",
+  "keywords": [
+    "--root",
+    "claimkeeper_root",
+    "working directory"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "--root or CLAIMKEEPER_ROOT tells claimkeeper which project to use, so the MCP server and CLI work whatever the agent's working directory.",
+      "at": "2026-11-18T16:32:22.289Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "note": "INSTALL step 3",
+      "anchor": "`--root` tells the server which project to use, so it doesn't depend on the client's working directory.",
+      "line": 36
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": "src/cli.ts",
+      "rev": 1,
+      "note": "CLI help",
+      "anchor": "Any command: --root <dir> (or CLAIMKEEPER_ROOT) sets the project, for agents that",
+      "line": 33,
+      "block": "b26fa9663708"
+    },
+    {
+      "id": "m3",
+      "kind": "code",
+      "path": "src/core/project.ts",
+      "rev": 1,
+      "note": "root resolution",
+      "anchor": "return resolve(process.env.CLAIMKEEPER_ROOT || process.env.CLAUDE_PROJECT_DIR || process.cwd());",
+      "line": 24,
+      "block": "900812c0eeea"
+    }
+  ],
+  "next": 4
+}

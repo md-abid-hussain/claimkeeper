@@ -23,4 +23,4 @@ A **claim** is one thing the product says about itself: a principle, feature, nu
 - Never put secrets in claims, anchors, notes or meta.
 - Register user-facing claims only, not one-off wording or implementation details.
 
-Hook messages tagged `[claimkeeper]` are for you: act on them briefly, don't repeat them to the user unless they report a meaning change or stale media.
+Hook messages tagged `[claimkeeper]` are for you: act on them briefly, don't repeat them to the user unless they report a meaning change or stale media. In an agent without claimkeeper hooks, do their job yourself: `claims_in <file>` before editing a product-facing file, and `claims_check` before you finish a task that touched one.

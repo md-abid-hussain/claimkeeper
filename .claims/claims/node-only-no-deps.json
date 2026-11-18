@@ -69,7 +69,16 @@
       "line": 14,
       "block": "5cababeb48a2",
       "note": "engines field"
+    },
+    {
+      "id": "m7",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 4,
+      "note": "INSTALL requirements",
+      "anchor": "Node.js 22 or newer (`node --version`)",
+      "line": 9
     }
   ],
-  "next": 7
+  "next": 8
 }

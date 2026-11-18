@@ -1,0 +1,40 @@
+{
+  "id": "tested-node-versions",
+  "desc": "The test suite runs on Node.js 22 and 24, on Linux and Windows, in CI.",
+  "keywords": [
+    "tested",
+    "node 22",
+    "node 24",
+    "ci"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "The test suite runs on Node.js 22 and 24, on Linux and Windows, in CI.",
+      "at": "2026-11-18T16:32:22.724Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README install",
+      "anchor": "tested on 22 and 24; development uses 24",
+      "line": 35
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": ".github/workflows/test.yml",
+      "rev": 1,
+      "note": "CI matrix",
+      "anchor": "node: [22, 24]",
+      "line": 17,
+      "block": "c5120dc5a12f"
+    }
+  ],
+  "next": 3
+}

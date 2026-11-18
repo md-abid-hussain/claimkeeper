@@ -7,13 +7,15 @@
       "inputs": [
         {
           "ref": "README.md",
-          "hash": "12268:40464cbe098a5932"
+          "hash": "13075:8a91715edc172df2"
         }
       ],
       "claims": {
         "anchor-size-limit": 1,
+        "any-agent-mcp": 1,
         "ci-check": 1,
-        "context-budget": 1,
+        "context-budget": 2,
+        "git-precommit-check": 1,
         "hooks-never-break-session": 1,
         "hooks-read-only": 3,
         "init-claims-first": 1,
@@ -27,21 +29,22 @@
         "numbers-tied-to-code": 1,
         "opt-in-per-project": 1,
         "pinned-deps": 1,
-        "product-purpose": 1,
+        "product-purpose": 2,
         "regen-chain": 1,
         "robust-relocation": 1,
-        "scout-read-only": 1,
+        "scout-read-only": 2,
         "secrets-refused": 1,
         "stop-check-strict-default": 2,
         "store-in-git": 2,
+        "tested-node-versions": 1,
         "untrusted-store-contained": 1,
         "user-decides-meaning": 1
       },
-      "fp": "12268:40464cbe098a5932",
+      "fp": "13075:8a91715edc172df2",
       "meta": {
         "tool": "npm run build"
       },
-      "at": "2026-11-18T16:11:12.747Z"
+      "at": "2026-11-18T16:32:34.106Z"
     }
   ]
 }

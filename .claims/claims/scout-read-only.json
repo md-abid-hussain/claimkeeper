@@ -1,17 +1,24 @@
 {
   "id": "scout-read-only",
-  "desc": "In an existing project, discovery runs in the claim-scout subagent, which can only read files (Read, Glob, Grep) and returns a short proposal.",
+  "desc": "In an existing project, discovery is read-only: in Claude Code it runs in the claim-scout subagent (Read, Glob, Grep) and returns a short proposal; other agents follow the same instructions inline.",
   "keywords": [
     "claim-scout",
     "read-only",
     "subagent"
   ],
-  "rev": 1,
+  "rev": 2,
   "history": [
     {
       "rev": 1,
       "desc": "In an existing project, discovery runs in the claim-scout subagent, which can only read files (Read, Glob, Grep) and returns a short proposal.",
       "at": "2026-11-18T14:17:14.939Z"
+    },
+    {
+      "rev": 2,
+      "desc": "In an existing project, discovery is read-only: in Claude Code it runs in the claim-scout subagent (Read, Glob, Grep) and returns a short proposal; other agents follow the same instructions inline.",
+      "at": "2026-11-18T16:32:19.425Z",
+      "by": "user_request",
+      "why": "user: \"run claimkeeper audit and fixes if required\" (after asking for a general install for Codex/Cursor)"
     }
   ],
   "mentions": [
@@ -19,30 +26,39 @@
       "id": "m1",
       "kind": "text",
       "path": "README.md",
-      "rev": 1,
-      "note": "Turn it on: existing project",
+      "rev": 2,
       "anchor": "a read-only `claim-scout` subagent reads your README, landing page, scripts, compositions and SVGs in its own context",
-      "line": 54
+      "line": 62,
+      "note": "Turn it on: existing project"
     },
     {
       "id": "m2",
       "kind": "text",
       "path": "plugin/agents/claim-scout.md",
-      "rev": 1,
-      "note": "agent description",
+      "rev": 2,
       "anchor": "Read-only. Used by /claimkeeper:init.",
-      "line": 3
+      "line": 3,
+      "note": "agent description"
     },
     {
       "id": "m3",
       "kind": "code",
       "path": "plugin/agents/claim-scout.md",
-      "rev": 1,
-      "note": "agent tool list",
+      "rev": 2,
       "anchor": "tools: Read, Glob, Grep",
       "line": 4,
-      "block": "61c2f111eb83"
+      "block": "61c2f111eb83",
+      "note": "agent tool list"
+    },
+    {
+      "id": "m4",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 2,
+      "note": "INSTALL step 8",
+      "anchor": "If you can't run the `claim-scout` subagent, follow `CK/plugin/agents/claim-scout.md` yourself.",
+      "line": 111
     }
   ],
-  "next": 4
+  "next": 5
 }

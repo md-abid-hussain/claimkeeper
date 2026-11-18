@@ -43,7 +43,16 @@
       "line": 557,
       "block": "8941b7b0497e",
       "note": "detection"
+    },
+    {
+      "id": "m4",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "note": "INSTALL instructions block",
+      "anchor": "A claim with a number also gets the code constant that sets it",
+      "line": 74
     }
   ],
-  "next": 4
+  "next": 5
 }

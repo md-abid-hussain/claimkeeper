@@ -3,6 +3,7 @@ import { test } from "node:test";
 import { findSecret, cleanMeta } from "../src/core/secrets.ts";
 import { globMatch } from "../src/core/project.ts";
 import { blockAt, locate } from "../src/core/text.ts";
+import { FAKE } from "./fakes.ts";
 
 test("exact match picks the occurrence nearest the hint", () => {
   const c = "a\nWorks offline today.\nb\nc\nWorks offline today.\n";
@@ -41,13 +42,14 @@ test("blockAt follows braces and indentation", () => {
 });
 
 test("secrets are detected, normal prose is not", () => {
-  assert.ok(findSecret("key sk-abcdefghijklmnopqrstuvwxyz123456"));
-  assert.ok(findSecret("ELEVENLABS_API_KEY=abcd1234efgh5678"));
-  assert.ok(findSecret("token: 9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a"));
+  assert.ok(findSecret(`key ${FAKE.skKey}`));
+  assert.ok(findSecret(FAKE.envAssignment));
+  assert.ok(findSecret(FAKE.hexToken));
+  assert.ok(findSecret(FAKE.awsKeyId));
   assert.equal(findSecret("Everything runs on your device; no audio ever leaves your laptop."), undefined);
   assert.equal(findSecret("It never stores anything that looks like a secret: secret-looking anchors are refused."), undefined);
-  assert.ok(findSecret("password: hunter2hunter2"));
-  assert.deepEqual(cleanMeta({ tool: "elevenlabs", voice: "Rachel", api_key: "x", headers: "Bearer abcdefghijklmnop1234" }), { tool: "elevenlabs", voice: "Rachel" });
+  assert.ok(findSecret(FAKE.password));
+  assert.deepEqual(cleanMeta({ tool: "elevenlabs", voice: "Rachel", api_key: "x", headers: FAKE.bearer }), { tool: "elevenlabs", voice: "Rachel" });
 });
 
 test("globs", () => {

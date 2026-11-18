@@ -33,8 +33,17 @@
       "anchor": "Ask the user for the 3-7 things the product must always say about itself",
       "line": 16,
       "note": "init skill"
+    },
+    {
+      "id": "m3",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "note": "INSTALL step 8",
+      "anchor": "ask the user for the 3–7 things the product must always say",
+      "line": 110
     }
   ],
-  "next": 3,
+  "next": 4,
   "noCode": "a guideline in the setup instructions, not a setting"
 }

@@ -20,7 +20,7 @@ import { clip } from "../core/text.js";
 const TAG = "[claimkeeper]";
 const TOP = 5;
 function openStore(input) {
-    const root = findRoot(process.env.CLAUDE_PROJECT_DIR || input.cwd || process.cwd());
+    const root = findRoot(process.env.CLAIMKEEPER_ROOT || process.env.CLAUDE_PROJECT_DIR || input.cwd || process.cwd());
     if (!root)
         return undefined;
     const store = Store.open(root);

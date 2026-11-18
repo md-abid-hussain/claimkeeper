@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, test } from "node:test";
 import { formatCheck, formatClaimViews, formatUpdate } from "../src/core/format.ts";
 import * as ops from "../src/core/ops.ts";
 import type { Store } from "../src/core/store.ts";
+import { FAKE } from "./fakes.ts";
 import { HACKATHON, makeProject, type Project } from "./helpers.ts";
 
 let p: Project;
@@ -172,11 +173,11 @@ describe("claims and mentions", () => {
   });
 
   test("anchors must exist, be unique and not be secrets; secret files are never tracked", () => {
-    p.write("docs/a.md", "Fast and private. Fast and private.\nAPI_KEY=sk-abcdefghijklmnopqrstuvwxyz0123\n");
+    p.write("docs/a.md", `Fast and private. Fast and private.\n${FAKE.skAssignment}\n`);
     p.write(".env", "ELEVENLABS_API_KEY=abc\n");
     assert.throws(() => ops.addMention(store, { claim: "on-device", path: "docs/a.md", anchor: "not in the file at all" }), /not found/);
     assert.throws(() => ops.addMention(store, { claim: "on-device", path: "docs/a.md", anchor: "Fast and private." }), /appears 2 times/);
-    assert.throws(() => ops.addMention(store, { claim: "on-device", path: "docs/a.md", anchor: "API_KEY=sk-abcdefghijklmnopqrstuvwxyz0123" }), /secret/);
+    assert.throws(() => ops.addMention(store, { claim: "on-device", path: "docs/a.md", anchor: FAKE.skAssignment }), /secret/);
     assert.throws(() => ops.addMention(store, { claim: "on-device", path: ".env", anchor: "ELEVENLABS_API_KEY=abc" }), /exclude/);
     assert.throws(() => ops.addMention(store, { claim: "on-device", path: "missing.md", anchor: "whatever text here" }), /file not found/);
     assert.throws(() => ops.addClaim(store, { id: "Bad Id", desc: "x" }), /invalid claim id/);

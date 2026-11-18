@@ -1,18 +1,25 @@
 {
   "id": "product-purpose",
-  "desc": "claimkeeper keeps what a product says about itself consistent across README, docs, landing page, pitch text, scripts, voiceovers, SVGs and demo videos while coding agents change things.",
+  "desc": "claimkeeper keeps what a product says about itself consistent across README, docs, landing page, pitch text, scripts, prompts given to the product's own model, voiceovers, SVGs and demo videos while coding agents change things.",
   "keywords": [
     "consistent",
     "claims",
     "landing page",
     "demo video"
   ],
-  "rev": 1,
+  "rev": 2,
   "history": [
     {
       "rev": 1,
       "desc": "claimkeeper keeps what a product says about itself consistent across README, docs, landing page, pitch text, scripts, voiceovers, SVGs and demo videos while coding agents change things.",
       "at": "2026-11-18T06:51:23.225Z"
+    },
+    {
+      "rev": 2,
+      "desc": "claimkeeper keeps what a product says about itself consistent across README, docs, landing page, pitch text, scripts, prompts given to the product's own model, voiceovers, SVGs and demo videos while coding agents change things.",
+      "at": "2026-11-18T16:32:19.584Z",
+      "by": "user_request",
+      "why": "user: \"run claimkeeper audit and fixes if required\" (after asking for a general install for Codex/Cursor)"
     }
   ],
   "mentions": [
@@ -20,47 +27,56 @@
       "id": "m1",
       "kind": "text",
       "path": "README.md",
-      "rev": 1,
-      "note": "README tagline",
+      "rev": 2,
       "anchor": "Keep what your product says about itself consistent — across the README, docs, landing page, pitch text, demo script, voiceover, SVGs and the demo video — while coding agents keep changing things.",
-      "line": 3
+      "line": 5,
+      "note": "README tagline"
     },
     {
       "id": "m3",
       "kind": "text",
       "path": "plugin/.claude-plugin/plugin.json",
-      "rev": 1,
-      "note": "plugin manifest description",
+      "rev": 2,
       "anchor": "Keep product claims consistent across README, docs, landing page, pitch text, scripts, SVGs, voiceovers and demo videos as coding agents change things.",
-      "line": 4
+      "line": 4,
+      "note": "plugin manifest description"
     },
     {
       "id": "m4",
       "kind": "text",
       "path": ".claude-plugin/marketplace.json",
-      "rev": 1,
-      "note": "marketplace metadata",
+      "rev": 2,
       "anchor": "keep product claims consistent across docs, pages, scripts and media.",
-      "line": 4
+      "line": 4,
+      "note": "marketplace metadata"
     },
     {
       "id": "m5",
       "kind": "text",
       "path": ".claude-plugin/marketplace.json",
-      "rev": 1,
-      "note": "marketplace plugin entry",
+      "rev": 2,
       "anchor": "Keep product claims consistent across docs, pages, scripts, SVGs, voiceovers and demo videos.",
-      "line": 9
+      "line": 9,
+      "note": "marketplace plugin entry"
     },
     {
       "id": "m6",
       "kind": "text",
       "path": "package.json",
-      "rev": 1,
-      "note": "npm description",
+      "rev": 2,
       "anchor": "Keep product claims consistent across docs, landing pages, pitch text, scripts, SVGs, voiceovers and demo videos while coding agents change things.",
-      "line": 4
+      "line": 4,
+      "note": "npm description"
+    },
+    {
+      "id": "m7",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 2,
+      "note": "INSTALL intro",
+      "anchor": "claimkeeper keeps what a product says about itself consistent across README, docs, landing page, pitch text, scripts, prompts, SVGs, voiceovers and demo videos.",
+      "line": 5
     }
   ],
-  "next": 7
+  "next": 8
 }

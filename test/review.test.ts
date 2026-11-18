@@ -11,6 +11,7 @@ import { globMatch } from "../src/core/project.ts";
 import type { Store } from "../src/core/store.ts";
 import { locate, normalize } from "../src/core/text.ts";
 import { postToolUse, sessionStart, stop } from "../src/hooks/hooks.ts";
+import { FAKE } from "./fakes.ts";
 
 let base: string;
 let root: string;
@@ -69,7 +70,7 @@ describe("code review fixes", () => {
   });
 
   test("excluded and protected paths named by the store are never read or written", () => {
-    write(".env", "OPENAI API KEY sk-proj-abcdefghijklmnopqrstuvwxyz123456\n");
+    write(".env", `${FAKE.skProjectLine}\n`);
     const f = ".claims/claims/local.json";
     const c = JSON.parse(read(f));
     c.mentions.push({ id: "m2", kind: "text", path: ".env", anchor: "OPENAI API KEY value", rev: 1 });
@@ -111,7 +112,7 @@ describe("code review fixes", () => {
   });
 
   test("wording stored from a reformatted match is secret-checked", () => {
-    write("docs/a.html", '<p>It runs fully on your <a href="https://x.example/?k=AKIAABCDEFGHIJKLMNOP">device</a> today.</p>\n');
+    write("docs/a.html", `<p>It runs fully on your <a href="https://x.example/?k=${FAKE.awsKeyId}">device</a> today.</p>\n`);
     const r = ops.addClaimWithMentions(store, { id: "local", mentions: [{ path: "docs/a.html", anchor: "It runs fully on your device today." }] });
     assert.equal(r.mentions[0]!.ok, false);
     assert.match((r.mentions[0] as { error: string }).error, /secret/);

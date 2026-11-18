@@ -1,0 +1,48 @@
+{
+  "id": "any-agent-mcp",
+  "desc": "Any agent that can use MCP servers can use claimkeeper by following INSTALL.md (MCP server plus instructions, with the optional pre-commit check); only Claude Code gets the live hooks, so other agents run the checks themselves.",
+  "keywords": [
+    "codex",
+    "cursor",
+    "any agent",
+    "install.md"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Any agent that can use MCP servers can use claimkeeper by following INSTALL.md (MCP server plus instructions, with the optional pre-commit check); only Claude Code gets the live hooks, so other agents run the checks themselves.",
+      "at": "2026-11-18T16:32:21.862Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README install",
+      "anchor": "Any agent that can use MCP servers works.",
+      "line": 47
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README install",
+      "anchor": "Without Claude Code's hooks, the agent runs the checks itself as its instructions say",
+      "line": 51
+    },
+    {
+      "id": "m3",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "note": "INSTALL intro",
+      "anchor": "You are a coding agent (Codex, Cursor, Claude Code, or any agent that can use MCP servers)",
+      "line": 3
+    }
+  ],
+  "next": 4
+}
