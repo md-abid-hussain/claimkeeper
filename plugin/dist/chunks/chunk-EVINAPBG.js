@@ -367,6 +367,8 @@ function mentionLine(r, withClaim = false, seen) {
         visual: open ${clip(m.path, 160)} to look at it`;
   if (r.alsoAt?.length) line += `
         same wording also at lines ${r.alsoAt.join(", ")}`;
+  if (r.gitRename) line += `
+        git: renamed to ${clip(r.gitRename, 160)} (claim_update edits {mention, relink})`;
   if (r.candidates?.length) line += `
         maybe moved to: ${r.candidates.map((c) => clip(c, 160)).join(", ")} (claim_update edits {mention, relink})`;
   if (m.note) line += `
@@ -480,6 +482,9 @@ function formatUpdate(u) {
   } else parts.push(`${u.claim.id} rev ${u.claim.rev} (meaning unchanged)`);
   if (u.edits.length) {
     parts.push("edits:\n" + u.edits.map((e) => `  ${e.mention}: ${e.ok ? "ok" : "FAILED"} \u2014 ${e.message}`).join("\n"));
+  }
+  if (u.staleKeywords?.length) {
+    parts.push(`Keywords no longer in the meaning: ${u.staleKeywords.map((k) => `"${k}"`).join(", ")} \u2014 replace them with claim_update {claim, keywords:[...]} so scans don't match the wrong lines.`);
   }
   if (u.accepted) {
     parts.push(`accept_all: confirmed ${u.accepted.count} places${u.accepted.left.length ? `; left alone: ${u.accepted.left.join("; ")}` : ""}`);
@@ -716,6 +721,31 @@ function walkFiles(root, limit = 2e4) {
 var TEXT_EXT = /\.(md|mdx|txt|html?|tsx?|jsx?|mjs|cjs|vue|svelte|astro|css|scss|json|ya?ml|toml|svg|xml|py|rb|go|rs|java|kt|swift|c|cc|cpp|h|cs|php|sh|ps1|vtt|srt|csv|tex|rst|ini|cfg|env\.example)$/i;
 function isTextPath(rel) {
   return TEXT_EXT.test(rel) || !/\.[A-Za-z0-9]+$/.test(rel.split("/").pop() ?? "");
+}
+var renameCache = /* @__PURE__ */ new Map();
+function gitRenames(root) {
+  const hit = renameCache.get(root);
+  if (hit && Date.now() - hit.at < 2e3) return hit.list;
+  let list = [];
+  if (isGitRepo(root)) {
+    const run = (args) => {
+      const r = spawnSync("git", ["-c", "core.quotepath=off", ...args], { cwd: root, encoding: "utf8", maxBuffer: 16 * 1024 * 1024 });
+      return r.status === 0 ? r.stdout : "";
+    };
+    const parse = (out) => out.split("\n").flatMap((line) => {
+      const m = /^R\d*\t([^\t]+)\t([^\t]+)$/.exec(line);
+      return m && !m[1].startsWith('"') && !m[2].startsWith('"') ? [[m[1], m[2]]] : [];
+    });
+    const history = parse(run(["log", "-M", "--diff-filter=R", "--name-status", "--format=", "-n", "500"])).reverse();
+    list = [...history, ...parse(run(["diff", "-M", "--name-status", "HEAD"]))];
+  }
+  renameCache.set(root, { at: Date.now(), list });
+  return list;
+}
+function followRename(renames, from) {
+  let cur = from;
+  for (const [a, b] of renames) if (a === cur) cur = b;
+  return cur === from ? void 0 : cur;
 }
 
 // src/core/store.ts
@@ -1219,6 +1249,12 @@ function contentOf(store, rel, opts) {
   opts.contents?.set(rel, c);
   return c;
 }
+function gitRenamedTo(store, rel) {
+  const to = followRename(gitRenames(store.root), rel);
+  if (!to || isForbiddenPath(store, to)) return void 0;
+  const abs = safeAbsPath(store.root, to);
+  return abs && existsSync3(abs) ? to : void 0;
+}
 function findCandidates(store, m, opts) {
   opts.files ??= walkFiles(store.root).filter((f) => !isForbiddenPath(store, f));
   const files = opts.files.filter((f) => f !== m.path);
@@ -1289,8 +1325,12 @@ function resolveMention(store, claim, ref, opts = {}) {
   if (!existsSync3(abs)) {
     const r = { ...base, status: "file_not_found" };
     if (opts.searchMissing) {
-      const c = findCandidates(store, m, opts);
-      if (c.length) r.candidates = c;
+      const moved = gitRenamedTo(store, m.path);
+      if (moved) r.gitRename = moved;
+      else {
+        const c = findCandidates(store, m, opts);
+        if (c.length) r.candidates = c;
+      }
     }
     return finish(r);
   }
@@ -1849,7 +1889,16 @@ function updateClaim(store, input) {
     staleMentions = store.mentions(claim.id).map((r) => resolveMention(store, claim, r, { contents })).filter((r) => r.stale && !r.acked);
     staleOutputs = outputResolver(store, { contents }).all().filter((o) => Object.hasOwn(o.output.claims, claim.id) && outputIsIssue(o));
   }
-  return { claim, ...meaning ? { meaning } : {}, edits, ...accepted ? { accepted } : {}, staleMentions, staleOutputs };
+  const staleKeywords = meaning ? claim.keywords.filter((k) => /\d/.test(k) && !claim.desc.toLowerCase().includes(k)) : [];
+  return {
+    claim,
+    ...meaning ? { meaning } : {},
+    edits,
+    ...accepted ? { accepted } : {},
+    ...staleKeywords.length ? { staleKeywords } : {},
+    staleMentions,
+    staleOutputs
+  };
 }
 function decision(claim, to, decidedBy, why) {
   const proposal = `"${clip(claim.desc, 80)}" -> "${clip(to, 80)}"`;

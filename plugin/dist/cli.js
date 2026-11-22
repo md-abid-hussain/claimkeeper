@@ -36,7 +36,7 @@ import {
   scanFile,
   statusText,
   toggle
-} from "./chunks/chunk-FJCQI5AX.js";
+} from "./chunks/chunk-EVINAPBG.js";
 
 // src/cli.ts
 import { resolve as resolve2 } from "node:path";
@@ -458,7 +458,7 @@ async function main(argv) {
   const [cmd, ...args] = all;
   switch (cmd) {
     case "mcp": {
-      const { startServer } = await import("./chunks/server-PBRVVZJI.js");
+      const { startServer } = await import("./chunks/server-3GIHEYF3.js");
       await startServer();
       return -1;
     }

@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { basename } from "node:path";
 import { fileSize, fingerprint, hashText } from "./fingerprint.ts";
-import { isExcluded, isProtectedPath, isTextPath, safeAbsPath, walkFiles } from "./project.ts";
+import { followRename, gitRenames, isExcluded, isProtectedPath, isTextPath, safeAbsPath, walkFiles } from "./project.ts";
 import type { MentionRef, Store } from "./store.ts";
 import { blockAt, clip, contextAround, FileIndex, locate } from "./text.ts";
 import {
@@ -72,6 +72,14 @@ function contentOf(store: Store, rel: string, opts: ResolveOptions): string | un
   const c = abs ? readText(abs) : undefined;
   opts.contents?.set(rel, c);
   return c;
+}
+
+/** The path git says this missing file was renamed to, if that file exists and may be tracked. */
+function gitRenamedTo(store: Store, rel: string): string | undefined {
+  const to = followRename(gitRenames(store.root), rel);
+  if (!to || isForbiddenPath(store, to)) return undefined;
+  const abs = safeAbsPath(store.root, to);
+  return abs && existsSync(abs) ? to : undefined;
 }
 
 function findCandidates(store: Store, m: Mention, opts: ResolveOptions): string[] {
@@ -151,8 +159,13 @@ export function resolveMention(store: Store, claim: Claim, ref: MentionRef, opts
   if (!existsSync(abs)) {
     const r: ResolvedMention = { ...base, status: "file_not_found" };
     if (opts.searchMissing) {
-      const c = findCandidates(store, m, opts);
-      if (c.length) r.candidates = c;
+      // git knows renames exactly; only when it doesn't, search by name, size and wording
+      const moved = gitRenamedTo(store, m.path);
+      if (moved) r.gitRename = moved;
+      else {
+        const c = findCandidates(store, m, opts);
+        if (c.length) r.candidates = c;
+      }
     }
     return finish(r);
   }

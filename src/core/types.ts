@@ -150,6 +150,8 @@ export interface ResolvedMention {
   similarity?: number;
   /** Paths that may be where a missing file went. */
   candidates?: string[];
+  /** Where git says a missing file was renamed to (more reliable than candidates). */
+  gitRename?: string;
   /** Meaning changed since this mention was confirmed. */
   stale: boolean;
   /** Description the mention was confirmed against, when stale. */

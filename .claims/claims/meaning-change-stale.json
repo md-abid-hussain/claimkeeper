@@ -100,8 +100,8 @@
       "kind": "text",
       "path": "README.md",
       "rev": 2,
-      "anchor": "| `claim_update` | new meaning (`desc`), `revert`, `remove`; per place: `text` (writes the wording into the file), `anchor` (the file already says it: keep that wording), `accept`, `ack`, `relink`, `remove`; `accept_all` confirms every other place you checked |",
-      "line": 157,
+      "anchor": "| `claim_update` | new meaning (`desc`), `revert`, `remove`; per place: `text` (writes the wording into the file), `anchor` (the file already says it: keep that wording), `accept`, `ack`, `relink`, `remove`; `accept_all` confirms every other place you checked; a meaning change also lists number keywords the new meaning no longer contains (it never rewrites keywords) |",
+      "line": 159,
       "note": "Tools table: claim_update"
     },
     {

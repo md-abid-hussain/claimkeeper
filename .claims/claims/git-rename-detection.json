@@ -1,0 +1,60 @@
+{
+  "id": "git-rename-detection",
+  "desc": "When a tracked file is missing, claimkeeper first asks git where it was renamed (committed history and staged renames) and names that path, then falls back to searching by name, size and wording; it only suggests, it never relinks on its own.",
+  "keywords": [
+    "git mv",
+    "rename",
+    "file_not_found",
+    "relink"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "When a tracked file is missing, claimkeeper first asks git where it was renamed (committed history and staged renames) and names that path, then falls back to searching by name, size and wording; it only suggests, it never relinks on its own.",
+      "at": "2026-11-22T15:40:25.379Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README catches table",
+      "anchor": "When git knows the rename (committed, or staged with `git mv`) it names the new path exactly",
+      "line": 25
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": "src/core/resolve.ts",
+      "rev": 1,
+      "note": "git lookup first",
+      "anchor": "function gitRenamedTo(store: Store, rel: string): string | undefined {",
+      "line": 78,
+      "block": "c959ea9a02cc"
+    },
+    {
+      "id": "m3",
+      "kind": "code",
+      "path": "src/core/project.ts",
+      "rev": 1,
+      "note": "reads git history and the working tree",
+      "anchor": "export function gitRenames(root: string): Rename[] {",
+      "line": 240,
+      "block": "d4b7ed99499e"
+    },
+    {
+      "id": "m4",
+      "kind": "code",
+      "path": "test/gitrename.test.ts",
+      "rev": 1,
+      "note": "test",
+      "anchor": "test(\"a committed rename is found even though the wording changed (search could not)\"",
+      "line": 40,
+      "block": "5fa8ecc7ffb4"
+    }
+  ],
+  "next": 5
+}

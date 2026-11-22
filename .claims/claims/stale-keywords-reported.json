@@ -1,0 +1,49 @@
+{
+  "id": "stale-keywords-reported",
+  "desc": "After a meaning change, claim_update lists keywords holding a number that the new meaning no longer contains, so scans don't match the wrong lines; it never rewrites keywords itself.",
+  "keywords": [
+    "keywords",
+    "stale keywords",
+    "claim_update"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "After a meaning change, claim_update lists keywords holding a number that the new meaning no longer contains, so scans don't match the wrong lines; it never rewrites keywords itself.",
+      "at": "2026-11-22T15:40:25.790Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README tools table",
+      "anchor": "a meaning change also lists number keywords the new meaning no longer contains (it never rewrites keywords)",
+      "line": 159
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": "src/core/ops.ts",
+      "rev": 1,
+      "note": "the check",
+      "anchor": "const staleKeywords = meaning ? claim.keywords.filter((k) => /\\d/.test(k) && !claim.desc.toLowerCase().includes(k)) : [];",
+      "line": 532,
+      "block": "0cc60296e312"
+    },
+    {
+      "id": "m3",
+      "kind": "code",
+      "path": "test/gitrename.test.ts",
+      "rev": 1,
+      "note": "test",
+      "anchor": "test(\"a meaning change lists number keywords the new meaning no longer contains, and rewrites nothing\"",
+      "line": 120,
+      "block": "c1bad18d836c"
+    }
+  ],
+  "next": 4
+}

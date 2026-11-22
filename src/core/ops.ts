@@ -310,6 +310,8 @@ export interface UpdateResult {
   staleOutputs: ResolvedOutput[];
   /** accept_all: places confirmed in bulk, and the ones left because their wording or file is missing. */
   accepted?: { count: number; left: string[] };
+  /** After a meaning change: keywords holding a number that the new meaning no longer contains. */
+  staleKeywords?: string[];
 }
 
 /** A place now confirmed for the current meaning: no ack, no leftover conflict note. */
@@ -525,7 +527,18 @@ export function updateClaim(
     staleMentions = store.mentions(claim.id).map((r) => resolveMention(store, claim, r, { contents })).filter((r) => r.stale && !r.acked);
     staleOutputs = outputResolver(store, { contents }).all().filter((o) => Object.hasOwn(o.output.claims, claim.id) && outputIsIssue(o));
   }
-  return { claim, ...(meaning ? { meaning } : {}), edits, ...(accepted ? { accepted } : {}), staleMentions, staleOutputs };
+  // keywords are curated, never rewritten for the user; but a number that left the meaning (a version,
+  // a count) would make nudges and scans match the wrong lines, so say so
+  const staleKeywords = meaning ? claim.keywords.filter((k) => /\d/.test(k) && !claim.desc.toLowerCase().includes(k)) : [];
+  return {
+    claim,
+    ...(meaning ? { meaning } : {}),
+    edits,
+    ...(accepted ? { accepted } : {}),
+    ...(staleKeywords.length ? { staleKeywords } : {}),
+    staleMentions,
+    staleOutputs,
+  };
 }
 
 /** Bring back the meaning of an earlier revision (as a new revision). */

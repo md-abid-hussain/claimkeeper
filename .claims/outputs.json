@@ -7,7 +7,7 @@
       "inputs": [
         {
           "ref": "README.md",
-          "hash": "16291:f8a3447ea19c6b1b"
+          "hash": "16552:91e480cf08f384cb"
         }
       ],
       "claims": {
@@ -19,6 +19,7 @@
         "context-budget": 2,
         "dry-run-writes-nothing": 1,
         "git-precommit-check": 1,
+        "git-rename-detection": 1,
         "hooks-never-break-session": 1,
         "hooks-read-only": 3,
         "init-claims-first": 1,
@@ -38,6 +39,7 @@
         "robust-relocation": 1,
         "scout-read-only": 2,
         "secrets-refused": 1,
+        "stale-keywords-reported": 1,
         "stop-check-strict-default": 3,
         "store-in-git": 2,
         "tested-node-versions": 1,
@@ -45,11 +47,11 @@
         "untrusted-store-contained": 1,
         "user-decides-meaning": 1
       },
-      "fp": "16291:f8a3447ea19c6b1b",
+      "fp": "16552:91e480cf08f384cb",
       "meta": {
         "tool": "npm run build"
       },
-      "at": "2026-11-22T15:08:52.423Z"
+      "at": "2026-11-22T15:41:00.639Z"
     }
   ]
 }

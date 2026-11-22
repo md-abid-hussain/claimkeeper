@@ -6,7 +6,6 @@ Ideas not built yet, roughly in priority order.
 
 The plugin's hooks are the main mechanism, because they run while the agent works and talk to the agent directly. Git covers what hooks can't see: hand edits between sessions, other tools, merges.
 
-- **Rename detection from git**: for `file_not_found`, ask git (`git diff -M` / `git log --follow`) where the file went, before falling back to name/size/wording search.
 - **Old wording from history**: for a stale place, show what it said at the earlier claim revision (`git show <commit>:<path>`), so the agent sees the exact old text next to the new meaning.
 
 ## Other

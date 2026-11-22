@@ -22,7 +22,7 @@ The tool does the deterministic work (store, find, fetch, rewrite, fingerprint, 
 |---|---|
 | Lines moved, text reflowed, wrapped in tags | Found anyway (exact → normalized → fuzzy). No false alarms. A moved place is re-pinned to its new line the next time a write tool touches its claim. |
 | Wording at one place edited | `changed`, with the old and new wording side by side |
-| File renamed / deleted | `file_not_found` with likely new locations — never a crash |
+| File renamed / deleted | `file_not_found` with likely new locations — never a crash. When git knows the rename (committed, or staged with `git mv`) it names the new path exactly; otherwise claimkeeper searches by name, size and wording |
 | Code that backs a claim changed | `code_changed`: verify the claim still holds |
 | Claim **meaning** changed | Revision bump; every place and output not updated is `STALE`; the agent must tell you |
 | A place contradicts a claim | Registered as `CONFLICT` and stays flagged until fixed |
@@ -156,7 +156,7 @@ claimkeeper makes no network requests and sends nothing anywhere: no telemetry, 
 | `claim_get` | list claims, or fetch claims with every place resolved live |
 | `claims_check` | only what needs attention, plus pending acknowledged items |
 | `claims_in` | claims in a file and outputs built from it; `scan` suggests unregistered mentions |
-| `claim_update` | new meaning (`desc`), `revert`, `remove`; per place: `text` (writes the wording into the file), `anchor` (the file already says it: keep that wording), `accept`, `ack`, `relink`, `remove`; `accept_all` confirms every other place you checked |
+| `claim_update` | new meaning (`desc`), `revert`, `remove`; per place: `text` (writes the wording into the file), `anchor` (the file already says it: keep that wording), `accept`, `ack`, `relink`, `remove`; `accept_all` confirms every other place you checked; a meaning change also lists number keywords the new meaning no longer contains (it never rewrites keywords) |
 | `output` | `record` / `ack` / `remove` generated media |
 
 Every tool declares all four MCP hints (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`) as explicit booleans. `claim_get`, `claims_check` and `claims_in` are read-only; `claims_config` and `claim_add` only add claimkeeper's own records; `claim_update` (can rewrite files and delete claims) and `output` (can stop tracking) are marked destructive so hosts can ask first. None reaches outside the project.

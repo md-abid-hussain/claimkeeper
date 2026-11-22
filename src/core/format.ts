@@ -42,6 +42,7 @@ export function mentionLine(r: ResolvedMention, withClaim = false, seen?: Set<st
   }
   if (m.kind === "svg" || m.kind === "image") line += `\n        visual: open ${clip(m.path, 160)} to look at it`;
   if (r.alsoAt?.length) line += `\n        same wording also at lines ${r.alsoAt.join(", ")}`;
+  if (r.gitRename) line += `\n        git: renamed to ${clip(r.gitRename, 160)} (claim_update edits {mention, relink})`;
   if (r.candidates?.length) line += `\n        maybe moved to: ${r.candidates.map((c) => clip(c, 160)).join(", ")} (claim_update edits {mention, relink})`;
   if (m.note) line += `\n        note: ${clip(m.note, 120)}`;
   if (r.context) line += `\n${r.context}`;
@@ -167,6 +168,9 @@ export function formatUpdate(u: UpdateResult): string {
   } else parts.push(`${u.claim.id} rev ${u.claim.rev} (meaning unchanged)`);
   if (u.edits.length) {
     parts.push("edits:\n" + u.edits.map((e) => `  ${e.mention}: ${e.ok ? "ok" : "FAILED"} — ${e.message}`).join("\n"));
+  }
+  if (u.staleKeywords?.length) {
+    parts.push(`Keywords no longer in the meaning: ${u.staleKeywords.map((k) => `"${k}"`).join(", ")} — replace them with claim_update {claim, keywords:[...]} so scans don't match the wrong lines.`);
   }
   if (u.accepted) {
     parts.push(`accept_all: confirmed ${u.accepted.count} places${u.accepted.left.length ? `; left alone: ${u.accepted.left.join("; ")}` : ""}`);

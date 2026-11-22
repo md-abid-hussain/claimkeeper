@@ -227,7 +227,47 @@ export function isTextPath(rel: string): boolean {
   return TEXT_EXT.test(rel) || !/\.[A-Za-z0-9]+$/.test(rel.split("/").pop() ?? "");
 }
 
+type Rename = readonly [from: string, to: string];
+
+const renameCache = new Map<string, { at: number; list: Rename[] }>();
+
+/**
+ * Renames git knows about, oldest first: committed ones from history (the last 500 commits) and
+ * staged or unstaged ones against HEAD (so `git mv` before a commit counts). A plain `mv` that git
+ * has not been told about is not here: the caller falls back to searching. Read-only git commands,
+ * no shell; cached for 2 s (the MCP server is long-lived, and a check resolves many places).
+ */
+export function gitRenames(root: string): Rename[] {
+  const hit = renameCache.get(root);
+  if (hit && Date.now() - hit.at < 2000) return hit.list;
+  let list: Rename[] = [];
+  if (isGitRepo(root)) {
+    const run = (args: string[]): string => {
+      const r = spawnSync("git", ["-c", "core.quotepath=off", ...args], { cwd: root, encoding: "utf8", maxBuffer: 16 * 1024 * 1024 });
+      return r.status === 0 ? r.stdout : "";
+    };
+    // "R087<TAB>old<TAB>new"; paths git had to quote (tabs, newlines) are skipped
+    const parse = (out: string): Rename[] =>
+      out.split("\n").flatMap((line) => {
+        const m = /^R\d*\t([^\t]+)\t([^\t]+)$/.exec(line);
+        return m && !m[1]!.startsWith('"') && !m[2]!.startsWith('"') ? [[m[1]!, m[2]!] as const] : [];
+      });
+    const history = parse(run(["log", "-M", "--diff-filter=R", "--name-status", "--format=", "-n", "500"])).reverse();
+    list = [...history, ...parse(run(["diff", "-M", "--name-status", "HEAD"]))];
+  }
+  renameCache.set(root, { at: Date.now(), list });
+  return list;
+}
+
+/** Where a path ended up after the renames (several in a row are followed), or undefined if it never moved. */
+export function followRename(renames: readonly Rename[], from: string): string | undefined {
+  let cur = from;
+  for (const [a, b] of renames) if (a === cur) cur = b;
+  return cur === from ? undefined : cur;
+}
+
 /** For tests. */
 export function _resetGitCache(): void {
   gitRootCache.clear();
+  renameCache.clear();
 }
