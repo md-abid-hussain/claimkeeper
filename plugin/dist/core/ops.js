@@ -249,12 +249,42 @@ function confirm(m, claim) {
             delete m.note;
     }
 }
+/** The file already says it (reworded by hand): point the place at that wording and confirm it. */
+function reanchor(store, claim, ref, anchor, line) {
+    const m = ref.mention;
+    if (!m.anchor || !ANCHORED_KINDS.has(m.kind))
+        throw new ClaimsError(`mention ${m.id} is ${m.kind}; anchor only applies to text/code/svg wording. Use accept.`);
+    guardPath(m.path, store.config().exclude);
+    const min = store.config().minAnchor;
+    if (anchor.length < min)
+        throw new ClaimsError(`anchor too short (${anchor.length} chars, min ${min}); include more of the sentence`);
+    if (anchor.length > MAX_ANCHOR)
+        throw new ClaimsError(`anchor too long (${anchor.length} chars, max ${MAX_ANCHOR}); anchor the key sentence`);
+    noSecret("anchor", anchor);
+    const content = readText(absPath(store.root, m.path));
+    if (content === undefined)
+        throw new ClaimsError(`${m.path} not found or not readable`);
+    const { best, others } = locate(content, anchor, line ?? m.line, false);
+    if (!best)
+        throw new ClaimsError(`that wording is not in ${m.path}; copy it exactly as the file says it now`);
+    const stored = content.slice(best.start, best.end);
+    if (stored.length > MAX_ANCHOR)
+        throw new ClaimsError(`the matched wording is too long (${stored.length} chars, max ${MAX_ANCHOR})`);
+    noSecret("anchor", stored);
+    m.anchor = stored;
+    m.line = best.line;
+    if (m.kind === "code")
+        m.block = hashText(blockAt(content, best.line));
+    confirm(m, claim);
+    store.saveMentionSide(claim.id, ref.local);
+    return `re-anchored ${m.path}:${m.line} at rev ${claim.rev}${others.length ? ` (same wording also at lines ${others.join(", ")}: pass line to pick another)` : ""}`;
+}
 function applyEdit(store, claim, e) {
     const ref = store.findMention(claim.id, e.mention);
     const m = ref.mention;
-    const actions = [e.text !== undefined, !!e.accept, e.ack !== undefined, e.relink !== undefined, !!e.remove].filter(Boolean).length;
+    const actions = [e.text !== undefined, !!e.accept, e.anchor !== undefined, e.ack !== undefined, e.relink !== undefined, !!e.remove].filter(Boolean).length;
     if (actions !== 1)
-        throw new ClaimsError("each edit needs exactly one of: text, accept, ack, relink, remove");
+        throw new ClaimsError("each edit needs exactly one of: text, accept, anchor, ack, relink, remove");
     if (e.remove) {
         removeMention(store, { claim: claim.id, mention: m.id });
         return "removed";
@@ -273,13 +303,15 @@ function applyEdit(store, claim, e) {
         const state = [r.status === "unchecked" ? "web place, check by hand" : r.status, r.stale ? (m.rev === 0 ? "registered conflict" : "written for an earlier meaning") : ""];
         return `acknowledged, waiting on the user (${state.filter(Boolean).join("; ")})`;
     }
+    if (e.anchor !== undefined)
+        return reanchor(store, claim, ref, e.anchor, e.line);
     if (e.accept) {
         guardPath(m.path, store.config().exclude);
         const r = resolveMention(store, claim, ref);
         if (r.status === "file_not_found")
             throw new ClaimsError(`${m.path} not found; use edits {mention, relink} or {mention, remove:true}`);
         if (r.status === "text_not_found")
-            throw new ClaimsError(`wording not found in ${m.path}; use text with old, or remove the mention`);
+            throw new ClaimsError(`wording not found in ${m.path}; if the file already says it differently use {mention, anchor:"<wording now in the file>"}; else text with old, or remove`);
         if (m.anchor && r.current !== undefined) {
             if (r.current.length > MAX_ANCHOR)
                 throw new ClaimsError("current text too long to anchor; use text to set a shorter wording");
@@ -327,7 +359,7 @@ function applyEdit(store, claim, e) {
     else {
         const r = resolveMention(store, claim, ref, { contents: new Map([[m.path, content]]) });
         if (!r.range || !["ok", "moved", "reformatted", "code_changed"].includes(r.status)) {
-            throw new ClaimsError(`mention is ${r.status}${r.current ? ` (now: "${r.current.slice(0, 80)}")` : ""}; pass old with the exact current text to replace`);
+            throw new ClaimsError(`mention is ${r.status}${r.current ? ` (now: "${r.current.slice(0, 80)}")` : ""}; the file's wording changed: keep it with {mention, anchor:"<wording now in the file>"}, or pass old with the exact current text to replace`);
         }
         [start, end] = r.range;
     }
@@ -383,6 +415,33 @@ export function updateClaim(store, input) {
             edits.push({ mention: e.mention, ok: false, message: err.message });
         }
     }
+    // accept_all: the agent checked that the remaining places still say the same thing; confirm them in one step
+    let accepted;
+    if (input.acceptAll) {
+        const edited = new Set((input.edits ?? []).map((e) => e.mention.slice(e.mention.lastIndexOf("#") + 1)));
+        const contents = new Map();
+        const left = [];
+        let count = 0;
+        for (const ref of store.mentions(claim.id)) {
+            if (edited.has(ref.mention.id))
+                continue;
+            const res = resolveMention(store, claim, ref, { contents });
+            if (!mentionIsIssue(res))
+                continue;
+            if (res.status === "text_not_found" || res.status === "file_not_found" || res.status === "unsafe_path" || res.status === "unchecked") {
+                left.push(`${ref.mention.id} ${res.status === "unchecked" ? "web place, check by hand" : res.status}`);
+                continue;
+            }
+            try {
+                applyEdit(store, claim, { mention: ref.mention.id, accept: true });
+                count++;
+            }
+            catch (err) {
+                left.push(`${ref.mention.id} ${err.message}`);
+            }
+        }
+        accepted = { count, left };
+    }
     let staleMentions = [];
     let staleOutputs = [];
     if (meaning) {
@@ -390,7 +449,7 @@ export function updateClaim(store, input) {
         staleMentions = store.mentions(claim.id).map((r) => resolveMention(store, claim, r, { contents })).filter((r) => r.stale && !r.acked);
         staleOutputs = outputResolver(store, { contents }).all().filter((o) => Object.hasOwn(o.output.claims, claim.id) && outputIsIssue(o));
     }
-    return { claim, ...(meaning ? { meaning } : {}), edits, staleMentions, staleOutputs };
+    return { claim, ...(meaning ? { meaning } : {}), edits, ...(accepted ? { accepted } : {}), staleMentions, staleOutputs };
 }
 /** Bring back the meaning of an earlier revision (as a new revision). */
 export function revertClaim(store, input) {

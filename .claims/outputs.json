@@ -7,13 +7,15 @@
       "inputs": [
         {
           "ref": "README.md",
-          "hash": "13075:8a91715edc172df2"
+          "hash": "15101:1f443b427013678f"
         }
       ],
       "claims": {
+        "agent-models": 1,
         "anchor-size-limit": 1,
         "any-agent-mcp": 1,
         "ci-check": 1,
+        "compact-outputs": 1,
         "context-budget": 2,
         "git-precommit-check": 1,
         "hooks-never-break-session": 1,
@@ -22,29 +24,30 @@
         "meaning-change-stale": 2,
         "missing-files-not-fatal": 1,
         "never-regenerates-media": 1,
-        "no-locking": 1,
         "no-network": 1,
         "node-only-no-deps": 4,
         "npx-cli": 1,
         "numbers-tied-to-code": 1,
         "opt-in-per-project": 1,
+        "parallel-sessions-safe": 1,
         "pinned-deps": 1,
         "product-purpose": 2,
         "regen-chain": 1,
         "robust-relocation": 1,
         "scout-read-only": 2,
         "secrets-refused": 1,
-        "stop-check-strict-default": 2,
+        "stop-check-strict-default": 3,
         "store-in-git": 2,
         "tested-node-versions": 1,
+        "tool-hints": 1,
         "untrusted-store-contained": 1,
         "user-decides-meaning": 1
       },
-      "fp": "13075:8a91715edc172df2",
+      "fp": "15101:1f443b427013678f",
       "meta": {
         "tool": "npm run build"
       },
-      "at": "2026-11-18T16:32:34.106Z"
+      "at": "2026-11-22T10:25:06.873Z"
     }
   ]
 }

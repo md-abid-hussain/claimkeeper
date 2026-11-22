@@ -72,9 +72,9 @@
       "kind": "code",
       "path": "src/mcp/tools.ts",
       "rev": 2,
-      "anchor": "turn it on for this project (.claims/, committed unless share=false)",
-      "line": 81,
-      "block": "99bca9a68ec0",
+      "anchor": "init: turn it on here (.claims/, committed unless share=false).",
+      "line": 128,
+      "block": "bad07e24cfbf",
       "note": "claims_config tool description"
     },
     {
@@ -82,9 +82,9 @@
       "kind": "text",
       "path": "INSTALL.md",
       "rev": 2,
-      "note": "INSTALL step 5",
       "anchor": "Add `--private` to keep the claim store out of git.",
-      "line": 90
+      "line": 90,
+      "note": "INSTALL step 5"
     }
   ],
   "next": 12

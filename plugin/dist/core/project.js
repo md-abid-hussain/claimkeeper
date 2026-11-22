@@ -26,6 +26,18 @@ export function projectRoot() {
     const base = defaultRoot();
     return findRoot(base) ?? base;
 }
+/**
+ * A linked git worktree (what parallel agent sessions often work in) has a .git *file*, not a
+ * folder. Its .claims/ is its own copy: claim changes live on that branch until merged.
+ */
+export function isLinkedWorktree(root) {
+    try {
+        return lstatSync(join(root, ".git")).isFile();
+    }
+    catch {
+        return false;
+    }
+}
 export function toPosix(p) {
     return p.split(sep).join("/").replace(/\\/g, "/");
 }

@@ -114,6 +114,12 @@ Follow the `init` skill (`CK/plugin/skills/init/SKILL.md`):
 
 List every file you created or edited: the MCP config, the skills folder, the instructions block, `.claims/`, and the git hook. Then say how to undo each one: remove the MCP entry, the skills and the block, run `uninstall-git-hook`, and delete `.claims/`.
 
+## Which model, and parallel sessions
+
+- A small, cheap model is fine for the mechanical steps: `claim_add`, `claims_check`, `claims_in`, accepting places that still say the same thing, and read-only discovery. Use a stronger model for judgment: does a place contradict a claim, did the new wording change the meaning, when to stop and ask the user.
+- Several sessions or subagents may write claims at the same time in one folder: writes are serialized by a short lock, so none is lost. Sessions in separate git worktrees each have their own `.claims/`: commit and merge it. `claims_config {action: "status"}` says when a session is in a linked worktree.
+- Give every session the same `--root PROJECT` so they all use one store.
+
 ## What works where
 
 | | Claude Code (plugin) | Other agents (MCP + instructions) |

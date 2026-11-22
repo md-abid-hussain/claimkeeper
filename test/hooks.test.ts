@@ -49,10 +49,35 @@ describe("hooks", () => {
     init();
     t.mock.timers.enable({ apis: ["Date"], now: Date.parse("2026-11-18T12:00:00.000Z") }); // frozen clock: everything happens at once
     sessionStart({ session_id: sid, source: "startup" });
-    ops.updateClaim(store, { claim: "on-device", desc: "Audio is processed on-device; summaries sync to the cloud.", decidedBy: "user", why: "user: add sync" });
-    const out = stop({ session_id: sid }) as { decision?: string; reason?: string };
-    assert.match(out.reason!, /Meaning changed[\s\S]*on-device/);
+    ops.updateClaim(store, { claim: "on-device", desc: "Audio is processed on-device; summaries sync to the cloud.", decidedBy: "user", why: "user: add sync", edits: [{ mention: "m1", accept: true }, { mention: "m2", accept: true }] });
+    ops.ackOutput(store, { id: "voiceover", note: "not now" });
+    const out = stop({ session_id: sid }) as { decision?: string; systemMessage?: string };
+    assert.match(out.systemMessage!, /meaning changed[\s\S]*on-device/i);
+    assert.equal(out.decision, undefined, "a meaning change alone never blocks: claim_update already told the agent to report it");
     assert.equal(stop({ session_id: sid }), undefined, "reported once");
+  });
+
+  test("a meaning change with every place updated costs no extra turn", () => {
+    init();
+    sessionStart({ session_id: sid, source: "startup" });
+    const to = "Audio is processed on-device; summaries sync to the cloud.";
+    ops.updateClaim(store, { claim: "on-device", desc: to, decidedBy: "user", why: "user: add sync", edits: [{ mention: "m1", accept: true }, { mention: "m2", accept: true }] });
+    ops.ackOutput(store, { id: "voiceover", note: "not now" });
+    const out = stop({ session_id: sid }) as { decision?: string; reason?: string; systemMessage?: string };
+    assert.equal(out.decision, undefined);
+    assert.equal(out.reason, undefined, "nothing is sent to the agent");
+    assert.match(out.systemMessage!, /on-device/, "the user still sees the change");
+  });
+
+  test("a meaning change next to a real problem blocks on the problem only", () => {
+    init();
+    sessionStart({ session_id: sid, source: "startup" });
+    ops.updateClaim(store, { claim: "on-device", desc: "Audio is processed on-device; summaries sync to the cloud.", decidedBy: "user", why: "user: add sync" });
+    const out = stop({ session_id: sid }) as { decision?: string; reason?: string; systemMessage?: string };
+    assert.equal(out.decision, "block");
+    assert.doesNotMatch(out.reason!, /Meaning changed/);
+    assert.match(out.reason!, /Places now inconsistent/);
+    assert.match(out.systemMessage!, /meaning changed/i);
   });
 
   test("silent when the project never ran init (opt-in)", () => {
@@ -156,7 +181,7 @@ describe("hooks", () => {
     ops.toggle(store, { stop: "warn" }, "project");
     const out = stop({ session_id: sid }) as { systemMessage?: string; decision?: string };
     assert.equal(out.decision, undefined);
-    assert.match(out.systemMessage!, /Meaning changed[\s\S]*on-device/);
+    assert.match(out.systemMessage!, /meaning changed[\s\S]*on-device/i);
     assert.match(out.systemMessage!, /out:voiceover/);
     assert.equal(stop({ session_id: sid }), undefined);
   });

@@ -259,9 +259,9 @@ describe("code review fixes", () => {
     sessionStart({ session_id: "s", source: "startup" });
     ops.updateClaim(store, { claim: "local", desc: "Audio stays on the device; summaries sync.", decidedBy: "user_request", why: "user asked for team sharing" });
     write("README.md", read("README.md").replace("Murmur keeps all audio on your laptop.", "Murmur uploads audio."));
-    const reason = (stop({ session_id: "s" }) as { reason?: string }).reason!;
-    assert.match(reason, /\(from user's request\)/);
-    assert.match(reason, /don't guess to finish/);
+    const out = stop({ session_id: "s" }) as { reason?: string; systemMessage?: string };
+    assert.match(out.systemMessage!, /\(from user's request\)/, "the user is shown who decided");
+    assert.match(out.reason!, /don't guess to finish/, "the agent is told to ask rather than guess");
   });
 
   // ---------- hooks ----------

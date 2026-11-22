@@ -14,17 +14,40 @@ import {
   outputLine,
 } from "../core/format.ts";
 import * as ops from "../core/ops.ts";
-import { defaultRoot, projectRoot } from "../core/project.ts";
+import { defaultRoot, isLinkedWorktree, projectRoot } from "../core/project.ts";
 import { ClaimsError, MENTION_KINDS, type MentionKind, type StopMode } from "../core/types.ts";
 
 type Json = Record<string, unknown>;
 
+/**
+ * MCP tool annotations. All four hints are always set to explicit booleans (some hosts reject
+ * tools that omit one). They describe the tool as a whole, so for a tool with several actions
+ * they describe its most impactful action; the description says which.
+ * openWorldHint is false everywhere: claimkeeper never touches the network or anything outside
+ * the project folder.
+ */
+export interface Annotations {
+  title: string;
+  readOnlyHint: boolean;
+  destructiveHint: boolean;
+  idempotentHint: boolean;
+  openWorldHint: false;
+}
+
 export interface ToolDef {
   name: string;
   description: string;
+  annotations: Annotations;
   inputSchema: Json;
   run(args: Json): string;
 }
+
+/** Reads only: never writes a file, in the project or in .claims/. */
+const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;
+/** Adds or updates claimkeeper's own records; never deletes or overwrites anything the user wrote. */
+const ADDITIVE = { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;
+/** Can rewrite project text, delete a claim or stop tracking: hosts should confirm. */
+const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false } as const;
 
 const str = (description: string): Json => ({ type: "string", description });
 const num = (description: string): Json => ({ type: "number", description });
@@ -102,7 +125,8 @@ function mentionInputs(a: Json): Array<Omit<ops.MentionInput, "claim">> {
 export const TOOLS: ToolDef[] = [
   {
     name: "claims_config",
-    description: "Set up or configure claim tracking. action init: turn it on for this project (.claims/, committed unless share=false). status: settings + health. set: hooks on/off (enabled), stop mode, nudges; scope 'me' (default) or 'project'.",
+    description: "Set up or configure claim tracking. init: turn it on here (.claims/, committed unless share=false). status: settings + health (read-only). set: checks on/off (enabled), stop mode, nudges; scope 'me' (default) or 'project'. Writes only claimkeeper's own settings.",
+    annotations: { title: "Set up claim tracking", ...ADDITIVE },
     inputSchema: obj(
       {
         action: { type: "string", enum: ["init", "status", "set"] },
@@ -126,12 +150,15 @@ export const TOOLS: ToolDef[] = [
         return formatConfig(ops.toggle(st, defined({ enabled: obool(a, "enabled"), stop, nudge: obool(a, "nudge") }), a.scope === "project" ? "project" : "me"));
       }
       const c = ops.check(st);
-      return `${formatConfig(st.config())}\n${c.claims} claims, ${c.mentions} mentions, ${c.outputs} outputs; ${c.mentionIssues.length + c.outputIssues.length} need attention, ${c.mentionAcked.length + c.outputAcked.length} pending.`;
+      // a session in a linked git worktree keeps its own copy of the store: say so, it is the usual reason a claim "went missing"
+      const wt = isLinkedWorktree(st.root) ? `\nLinked git worktree: claim changes made here live on this branch (${st.dir}); commit .claims/ and merge it to share them.` : "";
+      return `${formatConfig(st.config())}\n${c.claims} claims, ${c.mentions} mentions, ${c.outputs} outputs; ${c.mentionIssues.length + c.outputIssues.length} need attention, ${c.mentionAcked.length + c.outputAcked.length} pending.${wt}`;
     },
   },
   {
     name: "claim_add",
-    description: "Create a claim (id + one-sentence meaning) and/or register the places it appears. On an existing claim, just pass mentions. Wording is verified to exist.",
+    description: "Create a claim (id + one-sentence meaning) and/or register the places it appears. On an existing claim, just pass mentions. Wording is verified to exist. Only adds records; changes no project file.",
+    annotations: { title: "Add a claim or its places", ...ADDITIVE },
     inputSchema: obj(
       {
         id: str("lowercase-with-dashes, e.g. 'on-device'."),
@@ -154,18 +181,26 @@ export const TOOLS: ToolDef[] = [
   },
   {
     name: "claim_get",
-    description: "Claims with every place resolved against the files as they are now (wording, line, status) plus outputs built from them. No ids: list all claims.",
-    inputSchema: obj({ ids: strArr("Claim ids (omit to list all)."), context: num("Lines of context per text place, 0-10.") }),
+    description: "Claims with every place resolved against the files as they are now (line, status, wording) plus outputs built from them. No ids: list all claims. Read-only. Prefer one id at a time.",
+    annotations: { title: "Get claims", ...READ_ONLY },
+    inputSchema: obj({
+      ids: strArr("Claim ids (omit to list all)."),
+      context: num("Lines of context per text place, 0-10."),
+      view: { type: "string", enum: ["full", "brief"], description: "brief: healthy places by file and id only, no wording (default for claims with more than 8 places). full: all wording." },
+    }),
     run(a) {
       const ids = oarr(a, "ids") ?? [];
       if (!ids.length) return formatList(ops.listClaims(store()));
       const ctx = Math.max(0, Math.min(10, onum(a, "context") ?? 0));
-      return formatClaimViews(ops.getClaims(store(), ids, ctx ? { context: ctx } : {}));
+      const v = os(a, "view");
+      if (v !== undefined && v !== "full" && v !== "brief") throw new ClaimsError('view must be "full" or "brief"');
+      return formatClaimViews(ops.getClaims(store(), ids, ctx ? { context: ctx } : {}), v ?? (ctx ? "full" : "auto"));
     },
   },
   {
     name: "claims_check",
-    description: "Only what needs attention: drifted/missing places, stale meanings, outputs needing regeneration, plus pending acknowledged items.",
+    description: "Only what needs attention: drifted/missing places, stale meanings, outputs needing regeneration, plus pending acknowledged items. Read-only.",
+    annotations: { title: "Check claims", ...READ_ONLY },
     inputSchema: obj({ claims: strArr("Limit to these claims."), paths: strArr("Limit to these files.") }),
     run(a) {
       return formatCheck(ops.check(store(), defined({ claims: oarr(a, "claims"), paths: oarr(a, "paths"), searchMissing: true })));
@@ -173,7 +208,8 @@ export const TOOLS: ToolDef[] = [
   },
   {
     name: "claims_in",
-    description: "Claims a file holds and outputs built from it. scan=true also suggests unregistered mentions of known claims.",
+    description: "Claims a file holds and outputs built from it. scan=true also suggests unregistered mentions of known claims. Read-only.",
+    annotations: { title: "Claims in a file", ...READ_ONLY },
     inputSchema: obj({ path: str("File path."), scan: bool("Also suggest unregistered mentions.") }, ["path"]),
     run(a) {
       const st = store();
@@ -185,7 +221,8 @@ export const TOOLS: ToolDef[] = [
   {
     name: "claim_update",
     description:
-      "Change a claim. desc = new MEANING, only on the user's decision (decided_by + why required; bumps revision; unconfirmed places/outputs go stale; tell the user). revert = earlier revision's meaning (same rule). remove = delete the claim. edits per place: {mention, text} new wording (each place its own words; add old when it drifted), {mention, accept:true} still true, {mention, ack} known issue left for later, {mention, relink} file moved, {mention, remove:true}. Rewording without desc keeps the meaning.",
+      "Change a claim. desc = new MEANING, only on the user's decision (decided_by + why; bumps revision; unconfirmed places/outputs go stale; tell the user). revert = an earlier revision's meaning (same rule). remove = delete the claim. edits per place: {mention, text} new wording written into the file; {mention, anchor} the file already says it, keep that wording; {mention, accept:true} still true; {mention, ack} left for later; {mention, relink} file moved; {mention, remove:true}. accept_all confirms every other place that still has its wording. Rewording without desc keeps the meaning. Can rewrite project files and delete claims.",
+    annotations: { title: "Update or remove a claim", ...DESTRUCTIVE },
     inputSchema: obj(
       {
         claim: str("Claim id."),
@@ -198,6 +235,7 @@ export const TOOLS: ToolDef[] = [
         },
         why: str("Required with desc/revert: the user's words, or the request the change follows from."),
         remove: bool("Delete the whole claim."),
+        accept_all: bool("After the edits: confirm every other place whose wording is still found (changed, moved, code changed) at the current revision. Only after you checked each still says the same thing; places with missing wording or files are left and listed."),
         keywords: strArr("Replace keywords."),
         no_code: str("Why a number in this claim has no code constant (e.g. 'a guideline, not a setting'); \"\" clears it."),
         edits: {
@@ -207,6 +245,7 @@ export const TOOLS: ToolDef[] = [
               mention: str("Place id, e.g. m3."),
               text: str("New wording for this place."),
               old: str("Exact current text to replace when the place drifted."),
+              anchor: str("The file already says it in new words: this exact wording, now in the file. Updates the place without touching the file."),
               accept: bool("Current content is still true."),
               ack: str("Why this known issue is left for now."),
               relink: str("New path after a rename."),
@@ -235,6 +274,7 @@ export const TOOLS: ToolDef[] = [
           mention: s(e, "mention"),
           text: e.text as string | undefined,
           old: e.old as string | undefined,
+          anchor: os(e, "anchor"),
           accept: obool(e, "accept") ? true : undefined,
           ack: e.ack as string | undefined,
           relink: os(e, "relink"),
@@ -245,7 +285,7 @@ export const TOOLS: ToolDef[] = [
       return formatUpdate(
         ops.updateClaim(
           st,
-          defined({ claim, desc: os(a, "desc"), revert: onum(a, "revert"), keywords: oarr(a, "keywords"), edits, decidedBy: os(a, "decided_by"), why: os(a, "why"), noCode: typeof a.no_code === "string" ? a.no_code : undefined }),
+          defined({ claim, desc: os(a, "desc"), revert: onum(a, "revert"), keywords: oarr(a, "keywords"), edits, acceptAll: obool(a, "accept_all") ? true : undefined, decidedBy: os(a, "decided_by"), why: os(a, "why"), noCode: typeof a.no_code === "string" ? a.no_code : undefined }),
         ),
       );
     },
@@ -253,7 +293,8 @@ export const TOOLS: ToolDef[] = [
   {
     name: "output",
     description:
-      "Generated files (ElevenLabs audio, SVG export, Remotion render...). record: right after (re)generating, with the inputs it was made from; it is then flagged when an input or claim meaning changes. ack: user chose not to regenerate now. remove: stop tracking. Never regenerate without the user's approval.",
+      "Generated files (ElevenLabs audio, SVG export, Remotion render...). record: right after (re)generating, with the inputs it was made from; it is then flagged when an input or claim meaning changes. ack: user chose not to regenerate now. remove: stop tracking (the file stays). Never generates files; never regenerate without the user's approval.",
+    annotations: { title: "Record generated files", ...DESTRUCTIVE },
     inputSchema: obj(
       {
         action: { type: "string", enum: ["record", "ack", "remove"] },

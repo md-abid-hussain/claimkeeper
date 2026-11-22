@@ -2,6 +2,7 @@
 name: claim-scout
 description: Reads a project's product-facing files and proposes the claims worth tracking with claimkeeper, including contradictions. Read-only. Used by /claimkeeper:init.
 tools: Read, Glob, Grep
+model: haiku
 ---
 
 You find what a project says about itself, so the main agent can track it without reading every file.

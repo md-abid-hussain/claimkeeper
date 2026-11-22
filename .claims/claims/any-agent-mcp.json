@@ -21,27 +21,27 @@
       "kind": "text",
       "path": "README.md",
       "rev": 1,
-      "note": "README install",
-      "anchor": "Any agent that can use MCP servers works.",
-      "line": 47
+      "anchor": "**Codex, Cursor or another agent?** Any agent that can use MCP servers works: the server hands every client its usage rules when it connects, and the tools declare read-only/destructive hints so hosts can warn before the risky ones.",
+      "line": 47,
+      "note": "README install"
     },
     {
       "id": "m2",
       "kind": "text",
       "path": "README.md",
       "rev": 1,
-      "note": "README install",
       "anchor": "Without Claude Code's hooks, the agent runs the checks itself as its instructions say",
-      "line": 51
+      "line": 51,
+      "note": "README install"
     },
     {
       "id": "m3",
       "kind": "text",
       "path": "INSTALL.md",
       "rev": 1,
-      "note": "INSTALL intro",
       "anchor": "You are a coding agent (Codex, Cursor, Claude Code, or any agent that can use MCP servers)",
-      "line": 3
+      "line": 3,
+      "note": "INSTALL intro"
     }
   ],
   "next": 4

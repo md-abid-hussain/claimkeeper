@@ -1,0 +1,60 @@
+{
+  "id": "tool-hints",
+  "desc": "Every MCP tool declares all four annotations (readOnlyHint, destructiveHint, idempotentHint, openWorldHint) as explicit booleans that match its behaviour: claim_get, claims_check and claims_in are read-only and write nothing, claim_update and output are marked destructive, and none reaches outside the project.",
+  "keywords": [
+    "readonlyhint",
+    "destructivehint",
+    "annotations",
+    "mcp"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Every MCP tool declares all four annotations (readOnlyHint, destructiveHint, idempotentHint, openWorldHint) as explicit booleans that match its behaviour: claim_get, claims_check and claims_in are read-only and write nothing, claim_update and output are marked destructive, and none reaches outside the project.",
+      "at": "2026-11-22T10:25:02.034Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README tools",
+      "anchor": "Every tool declares all four MCP hints (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`) as explicit booleans.",
+      "line": 160
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": "src/mcp/tools.ts",
+      "rev": 1,
+      "note": "read-only hints",
+      "anchor": "const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;",
+      "line": 46,
+      "block": "be96226be295"
+    },
+    {
+      "id": "m3",
+      "kind": "code",
+      "path": "src/mcp/tools.ts",
+      "rev": 1,
+      "note": "destructive hints",
+      "anchor": "const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false } as const;",
+      "line": 50,
+      "block": "3de8e2a0267c"
+    },
+    {
+      "id": "m4",
+      "kind": "code",
+      "path": "test/feedback.test.ts",
+      "rev": 1,
+      "note": "hint test",
+      "anchor": "test(\"tools/list declares all four hints as booleans on every tool\"",
+      "line": 35,
+      "block": "cf4653070995"
+    }
+  ],
+  "next": 5
+}

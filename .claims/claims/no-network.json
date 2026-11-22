@@ -30,10 +30,19 @@
       "kind": "text",
       "path": "INSTALL.md",
       "rev": 1,
-      "note": "INSTALL intro",
       "anchor": "Nothing is sent over the network; everything is stored in the project's `.claims/` folder.",
+      "line": 5,
+      "note": "INSTALL intro"
+    },
+    {
+      "id": "m3",
+      "kind": "text",
+      "path": "PRIVACY.md",
+      "rev": 1,
+      "note": "privacy policy",
+      "anchor": "- **No network.** It makes no network requests: no telemetry, no analytics, no crash reports, no external services, no accounts.",
       "line": 5
     }
   ],
-  "next": 3
+  "next": 4
 }

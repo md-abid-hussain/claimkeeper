@@ -46,7 +46,7 @@ claude plugin install claimkeeper@claimkeeper
 
 Or try it from a checkout without installing: `claude --plugin-dir ./plugin`.
 
-**Codex, Cursor or another agent?** Any agent that can use MCP servers works. Tell it:
+**Codex, Cursor or another agent?** Any agent that can use MCP servers works: the server hands every client its usage rules when it connects, and the tools declare read-only/destructive hints so hosts can warn before the risky ones. Tell it:
 
 > Install claimkeeper in this project by following https://github.com/md-abid-hussain/claimkeeper/blob/main/INSTALL.md
 
@@ -97,7 +97,9 @@ Everything the agent sees costs context, so claimkeeper discloses progressively:
 | Session start | one line: `Claim tracking is on: 13 claims, 2 need attention` |
 | Reading a file with claims | one line, once per file per session: `README.md holds claims: on-device l7 "…"` |
 | Writing claim wording / an output's input | only when something drifted or went stale |
-| End of turn | only **new** problems or meaning changes, top 5; blocks at most once each |
+| End of turn | only **new** problems, top 5; blocks at most once each. A meaning change is shown to you, not sent back to the agent |
+| Fetching a claim | `claim_get` lists healthy places by file and id without wording once a claim has more than 8; places needing attention are always shown in full |
+| After a meaning change | the first 5 stale places in full, the rest by file and id |
 | Claims skill | under 500 words (a test enforces it), loaded when product-facing text or media is touched; media and meaning-change guidance in reference files read only when needed |
 | Setup and audit | in Claude Code, run in subagents: only their short report enters the session (other agents run them inline) |
 
@@ -109,7 +111,7 @@ Everything the agent sees costs context, so claimkeeper discloses progressively:
 | PostToolUse: Read | the claims a file holds, once per file |
 | PostToolUse: Write / Edit | drift in claim wording, outputs now out of date, suggestions for new files |
 | PostToolUse: Bash, media MCP tools | reminders to record generated media; tracked files that disappeared |
-| Stop | whole-project check; new problems and meaning changes block once (strict) or are reported (relaxed) |
+| Stop | whole-project check; new problems block once (strict) or are reported (relaxed); a meaning change is shown to you as a notice and never blocks by itself |
 
 Hooks never change claims. They write only git-ignored local files: session state, the activity log and the status cache (plus a debug log, only if you set `CLAIMKEEPER_DEBUG`). Errors are swallowed; claim tracking never breaks a session.
 
@@ -143,7 +145,7 @@ A repo you clone or pull can ship its own `.claims/` folder, so claimkeeper trea
 
 ## Privacy
 
-claimkeeper makes no network requests and sends nothing anywhere: no telemetry, no external services. Everything it stores stays in your project: the claims in `.claims/` (committed with your repo unless you use `--private`) and your personal settings, session state and activity log in the git-ignored `.claims/local/`. It never stores secrets (see Security).
+claimkeeper makes no network requests and sends nothing anywhere: no telemetry, no external services. Everything it stores stays in your project: the claims in `.claims/` (committed with your repo unless you use `--private`) and your personal settings, session state and activity log in the git-ignored `.claims/local/`. It never stores secrets (see Security). The full policy is in [PRIVACY.md](PRIVACY.md).
 
 ## Tools (MCP)
 
@@ -154,8 +156,14 @@ claimkeeper makes no network requests and sends nothing anywhere: no telemetry, 
 | `claim_get` | list claims, or fetch claims with every place resolved live |
 | `claims_check` | only what needs attention, plus pending acknowledged items |
 | `claims_in` | claims in a file and outputs built from it; `scan` suggests unregistered mentions |
-| `claim_update` | new meaning (`desc`), `revert`, `remove`; per place: `text`, `accept`, `ack`, `relink`, `remove` |
+| `claim_update` | new meaning (`desc`), `revert`, `remove`; per place: `text` (writes the wording into the file), `anchor` (the file already says it: keep that wording), `accept`, `ack`, `relink`, `remove`; `accept_all` confirms every other place you checked |
 | `output` | `record` / `ack` / `remove` generated media |
+
+Every tool declares all four MCP hints (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`) as explicit booleans. `claim_get`, `claims_check` and `claims_in` are read-only; `claims_config` and `claim_add` only add claimkeeper's own records; `claim_update` (can rewrite files and delete claims) and `output` (can stop tracking) are marked destructive so hosts can ask first. None reaches outside the project.
+
+## Which model
+
+Mechanical work is fine on a small, cheap model (Haiku-class): registering places with exact wording (`claim_add`), `claims_check`, `claims_in`, accepting places that still say the same thing, and the first read-only discovery pass (`claim-scout` runs on Haiku in Claude Code). Use a stronger model (Sonnet-class or better) for judgment: whether a place contradicts a claim, whether new wording changed the meaning, and when to stop and ask the user (`claim-auditor` runs on Sonnet). A weak model that misjudges meaning can only do limited harm: a meaning change still needs the user's decision on record.
 
 ## CLI
 
@@ -190,7 +198,7 @@ node plugin/dist/cli.js status --root ../my-app   # any command: --root or CLAIM
 - Meaning vs rewording is the agent's judgment; `decided_by` makes the decision visible, but the agent still has to classify the change honestly.
 - Audio and video are judged through what they were made from (scripts, captions, compositions). Claude can look at images and SVGs, not watch video.
 - Text built at runtime (`t('hero.title')`) must be anchored where the literal string lives.
-- Two sessions changing the same claim at the same moment: last write wins.
+- Parallel sessions on one folder are safe: each tool call that writes takes a short file lock (`.claims/store.lock`), so places registered at the same moment are all kept. Sessions in separate git worktrees each have their own copy of `.claims/`: commit it and merge it like any file (`claims_config status` says when a session is in a linked worktree).
 
 ## Development
 

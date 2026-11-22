@@ -318,8 +318,14 @@ export function stop(input: HookInput): HookOutput {
     logActivity(store, `stop: ok${older ? ` (${older} older issues)` : ""}`);
     return undefined;
   }
+  // A meaning change never blocks and never goes to the agent: claim_update already told it to report
+  // the change, and asking again cost an extra turn. The user sees it as a notice instead.
+  const notice = meaning.length ? `${TAG} Claim meaning changed this turn:\n${meaning.join("\n")}` : undefined;
+  if (!mentionNew.length && !outputNew.length) {
+    logActivity(store, `stop: ${meaning.length} meaning changes noted${older ? ` (${older} older issues)` : ""}`);
+    return { systemMessage: notice };
+  }
   const parts = [`${TAG} Before finishing:`];
-  if (meaning.length) parts.push(`Meaning changed — make sure you told the user:\n${meaning.join("\n")}`);
   if (mentionNew.length) {
     parts.push(
       `Places now inconsistent (fix with claim_update, or accept/ack):\n${top(mentionNew, "claims_check").join("\n")}\n` +
@@ -330,7 +336,8 @@ export function stop(input: HookInput): HookOutput {
   if (older) parts.push(`(${older} older issues unchanged: claims_check)`);
   const text = parts.join("\n\n");
   logActivity(store, `stop: ${cfg.stop === "block" ? "blocked" : "warned"}: ${meaning.length} meaning changes, ${mentionNew.length} places, ${outputNew.length} outputs`);
-  return cfg.stop === "block" ? { decision: "block", reason: text } : { systemMessage: text };
+  if (cfg.stop === "block") return { decision: "block", reason: text, ...(notice ? { systemMessage: notice } : {}) };
+  return { systemMessage: notice ? `${notice}\n\n${text}` : text };
 }
 
 // ---------------- runner ----------------

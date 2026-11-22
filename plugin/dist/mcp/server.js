@@ -1,7 +1,7 @@
 /** Minimal MCP server over stdio (newline-delimited JSON-RPC 2.0). No dependencies. */
 import { logActivity, refreshState } from "../core/activity.js";
 import { projectRoot } from "../core/project.js";
-import { Store } from "../core/store.js";
+import { Store, withStoreLock } from "../core/store.js";
 import { ClaimsError } from "../core/types.js";
 import { TOOLS } from "./tools.js";
 const MUTATING = new Set(["claims_config", "claim_add", "claim_update", "output"]);
@@ -24,6 +24,8 @@ function trace(name, args, result) {
         // tracing never affects the tool result
     }
 }
+/** Works in any MCP client: the only guidance an agent without skills or hooks is sure to get. */
+export const INSTRUCTIONS = "Tracks product claims across docs, pages, scripts and media. Before editing product-facing text call claims_in {path} (or claim_get); register claims with claim_add; reword with claim_update edits; run claims_check before finishing. Only the user decides a meaning change (decided_by + why). Never regenerate media without their yes.";
 const SUPPORTED = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
 const VERSION = "0.3.0";
 function send(msg) {
@@ -58,13 +60,13 @@ export function handle(msg) {
                     protocolVersion: SUPPORTED.includes(asked) ? asked : SUPPORTED[0],
                     capabilities: { tools: { listChanged: false } },
                     serverInfo: { name: "claimkeeper", version: VERSION },
-                    instructions: "Tracks product claims across docs, pages, scripts and media. See the claims skill. Never regenerate media without the user's approval.",
+                    instructions: INSTRUCTIONS,
                 }));
             }
             case "ping":
                 return answer(ok(id, {}));
             case "tools/list":
-                return answer(ok(id, { tools: TOOLS.map(({ name, description, inputSchema }) => ({ name, description, inputSchema })) }));
+                return answer(ok(id, { tools: TOOLS.map(({ name, description, annotations, inputSchema }) => ({ name, description, inputSchema, annotations })) }));
             case "tools/call": {
                 if (isNotification)
                     return undefined; // never run a tool nobody will hear back from
@@ -74,8 +76,10 @@ export function handle(msg) {
                     return err(id, -32602, `unknown tool: ${name}`);
                 const args = params.arguments && typeof params.arguments === "object" && !Array.isArray(params.arguments) ? params.arguments : {};
                 try {
-                    const text = tool.run(args);
-                    if (MUTATING.has(name) && !(name === "claims_config" && args.action === "status"))
+                    const writes = MUTATING.has(name) && !(name === "claims_config" && args.action === "status");
+                    // parallel sessions each run their own server: serialize writes so none overwrites another's
+                    const text = writes ? withStoreLock(projectRoot(), () => tool.run(args)) : tool.run(args);
+                    if (writes)
                         trace(name, args, text);
                     return ok(id, { content: [{ type: "text", text }] });
                 }

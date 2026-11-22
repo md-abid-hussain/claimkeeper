@@ -1,13 +1,13 @@
 {
   "id": "stop-check-strict-default",
-  "desc": "By default (strict) the end-of-turn check blocks once on each new claim problem or meaning change, so the agent fixes or acknowledges it before finishing; problems that existed when the session started don't block, and relaxed mode only reports.",
+  "desc": "By default (strict) the end-of-turn check blocks once on each new claim problem, so the agent fixes or acknowledges it before finishing; a meaning change is shown to the user as a notice and never blocks by itself; problems that existed when the session started don't block, and relaxed mode only reports.",
   "keywords": [
     "strict",
     "relaxed",
     "block",
     "new problems"
   ],
-  "rev": 2,
+  "rev": 3,
   "history": [
     {
       "rev": 1,
@@ -18,6 +18,13 @@
       "rev": 2,
       "desc": "By default (strict) the end-of-turn check blocks once on each new claim problem or meaning change, so the agent fixes or acknowledges it before finishing; problems that existed when the session started don't block, and relaxed mode only reports.",
       "at": "2026-11-18T13:55:40.055Z"
+    },
+    {
+      "rev": 3,
+      "desc": "By default (strict) the end-of-turn check blocks once on each new claim problem, so the agent fixes or acknowledges it before finishing; a meaning change is shown to the user as a notice and never blocks by itself; problems that existed when the session started don't block, and relaxed mode only reports.",
+      "at": "2026-11-22T10:24:38.736Z",
+      "by": "user_request",
+      "why": "user feedback: the Stop hook asks the agent to \"tell the user\" about meaning changes it had already reported, which costs an extra turn"
     }
   ],
   "mentions": [
@@ -25,56 +32,56 @@
       "id": "m2",
       "kind": "text",
       "path": "README.md",
-      "rev": 2,
-      "note": "toggle relaxed line",
+      "rev": 3,
       "anchor": "report problems at the end of a turn, don't block",
-      "line": 58
+      "line": 66,
+      "note": "toggle relaxed line"
     },
     {
       "id": "m6",
       "kind": "code",
       "path": "src/core/store.ts",
-      "rev": 2,
-      "note": "code: default stop mode",
+      "rev": 3,
       "anchor": "stop: \"block\",",
-      "line": 10,
-      "block": "fc4702276ea6"
+      "line": 22,
+      "block": "fc4702276ea6",
+      "note": "code: default stop mode"
     },
     {
       "id": "m7",
       "kind": "text",
       "path": "README.md",
-      "rev": 2,
-      "note": "toggle strict line",
+      "rev": 3,
       "anchor": "fix or acknowledge new problems before finishing (default)",
-      "line": 59
+      "line": 67,
+      "note": "toggle strict line"
     },
     {
       "id": "m8",
       "kind": "text",
       "path": "README.md",
-      "rev": 2,
-      "note": "How it runs table: Stop",
-      "anchor": "new problems and meaning changes block once (strict) or are reported (relaxed)",
-      "line": 101
+      "rev": 3,
+      "anchor": "| Stop | whole-project check; new problems block once (strict) or are reported (relaxed); a meaning change is shown to you as a notice and never blocks by itself |",
+      "line": 112,
+      "note": "How it runs table: Stop"
     },
     {
       "id": "m9",
       "kind": "text",
       "path": "README.md",
-      "rev": 2,
-      "note": "Context budget table: end of turn",
-      "anchor": "only **new** problems or meaning changes, top 5; blocks at most once each",
-      "line": 89
+      "rev": 3,
+      "anchor": "| End of turn | only **new** problems, top 5; blocks at most once each. A meaning change is shown to you, not sent back to the agent |",
+      "line": 98,
+      "note": "Context budget table: end of turn"
     },
     {
       "id": "m10",
       "kind": "text",
       "path": "README.md",
-      "rev": 2,
-      "note": "How it runs table: SessionStart",
+      "rev": 3,
       "anchor": "snapshots existing issues so only new ones block later",
-      "line": 97
+      "line": 108,
+      "note": "How it runs table: SessionStart"
     }
   ],
   "next": 11

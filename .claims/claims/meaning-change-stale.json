@@ -35,9 +35,9 @@
       "kind": "code",
       "path": "src/mcp/tools.ts",
       "rev": 2,
-      "anchor": "desc = new MEANING, only on the user's decision (decided_by + why required; bumps revision; unconfirmed places/outputs go stale; tell the user).",
-      "line": 188,
-      "block": "4a5f4747841f",
+      "anchor": "desc = new MEANING, only on the user's decision (decided_by + why; bumps revision; unconfirmed places/outputs go stale; tell the user).",
+      "line": 224,
+      "block": "1119d5fdf1a0",
       "note": "claim_update tool description"
     },
     {
@@ -100,8 +100,8 @@
       "kind": "text",
       "path": "README.md",
       "rev": 2,
-      "anchor": "new meaning (`desc`), `revert`, `remove`; per place: `text`, `accept`, `ack`, `relink`, `remove`",
-      "line": 131,
+      "anchor": "| `claim_update` | new meaning (`desc`), `revert`, `remove`; per place: `text` (writes the wording into the file), `anchor` (the file already says it: keep that wording), `accept`, `ack`, `relink`, `remove`; `accept_all` confirms every other place you checked |",
+      "line": 157,
       "note": "Tools table: claim_update"
     },
     {
@@ -109,9 +109,9 @@
       "kind": "text",
       "path": "INSTALL.md",
       "rev": 2,
-      "note": "INSTALL instructions block",
       "anchor": "A meaning change only on the user's decision (`decided_by`, `why`); then tell the user what is now stale.",
-      "line": 75
+      "line": 75,
+      "note": "INSTALL instructions block"
     }
   ],
   "next": 13

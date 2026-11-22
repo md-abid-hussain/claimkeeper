@@ -1,0 +1,59 @@
+{
+  "id": "compact-outputs",
+  "desc": "Tool output stays compact: claim_get lists healthy places without their wording once a claim has more than 8 places, and after a meaning change only the first 5 stale places are shown in full, the rest by file and id.",
+  "keywords": [
+    "brief",
+    "stale places",
+    "context",
+    "claim_get"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Tool output stays compact: claim_get lists healthy places without their wording once a claim has more than 8 places, and after a meaning change only the first 5 stale places are shown in full, the rest by file and id.",
+      "at": "2026-11-22T10:25:02.275Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README context budget",
+      "anchor": "`claim_get` lists healthy places by file and id without wording once a claim has more than 8",
+      "line": 99
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README context budget",
+      "anchor": "the first 5 stale places in full, the rest by file and id",
+      "line": 100
+    },
+    {
+      "id": "m3",
+      "kind": "code",
+      "path": "src/core/format.ts",
+      "rev": 1,
+      "note": "brief threshold",
+      "anchor": "const BRIEF_ABOVE = 8;",
+      "line": 64,
+      "block": "cfe52680c55c"
+    },
+    {
+      "id": "m4",
+      "kind": "code",
+      "path": "src/core/format.ts",
+      "rev": 1,
+      "note": "stale threshold",
+      "anchor": "const STALE_FULL = 5;",
+      "line": 66,
+      "block": "f20ec836474c"
+    }
+  ],
+  "next": 5
+}

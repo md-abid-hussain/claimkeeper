@@ -1,0 +1,59 @@
+{
+  "id": "agent-models",
+  "desc": "In Claude Code the claim-scout agent runs on a small model (Haiku) and the claim-auditor on Sonnet: discovery is mechanical, auditing is judgment; mechanical tool use is fine on a small model, judging contradictions needs a stronger one.",
+  "keywords": [
+    "haiku",
+    "sonnet",
+    "model",
+    "claim-scout",
+    "claim-auditor"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "In Claude Code the claim-scout agent runs on a small model (Haiku) and the claim-auditor on Sonnet: discovery is mechanical, auditing is judgment; mechanical tool use is fine on a small model, judging contradictions needs a stronger one.",
+      "at": "2026-11-22T10:25:02.506Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "plugin/agents/claim-scout.md",
+      "rev": 1,
+      "anchor": "model: haiku",
+      "line": 5,
+      "note": "scout model"
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "plugin/agents/claim-auditor.md",
+      "rev": 1,
+      "anchor": "model: sonnet",
+      "line": 5,
+      "note": "auditor model"
+    },
+    {
+      "id": "m3",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "anchor": "(`claim-scout` runs on Haiku in Claude Code)",
+      "line": 164,
+      "note": "README Which model"
+    },
+    {
+      "id": "m4",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "anchor": "A small, cheap model is fine for the mechanical steps",
+      "line": 119,
+      "note": "INSTALL Which model"
+    }
+  ],
+  "next": 5,
+  "noCode": "no number: \"one\" just means \"a model\""
+}

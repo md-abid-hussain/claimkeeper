@@ -38,9 +38,9 @@
       "kind": "code",
       "path": "src/mcp/server.ts",
       "rev": 1,
-      "anchor": "Never regenerate media without the user's approval.",
-      "line": 72,
-      "block": "716a40b0b2cc",
+      "anchor": "Never regenerate media without their yes.",
+      "line": 30,
+      "block": "25b7b6c6ad8f",
       "note": "MCP server instructions"
     },
     {
@@ -58,9 +58,9 @@
       "kind": "code",
       "path": "src/mcp/tools.ts",
       "rev": 1,
-      "anchor": "Never regenerate without the user's approval.",
-      "line": 214,
-      "block": "24b11df0d219",
+      "anchor": "never regenerate without the user's approval.",
+      "line": 296,
+      "block": "c5a4062f2634",
       "note": "output tool description"
     },
     {
@@ -86,9 +86,9 @@
       "kind": "text",
       "path": "INSTALL.md",
       "rev": 1,
-      "note": "INSTALL instructions block",
       "anchor": "Never regenerate media (audio, video, images) without the user's yes",
-      "line": 77
+      "line": 77,
+      "note": "INSTALL instructions block"
     }
   ],
   "next": 13

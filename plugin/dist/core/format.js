@@ -74,11 +74,40 @@ export function formatClaimHeader(c) {
         s += `\n  rev ${h.rev} (${oneLine(h.at).slice(0, 10)}${decided(h)}): "${clip(h.desc, 120)}"`;
     return s;
 }
-export function formatClaimViews(views) {
+/** Claims with more places than this list the healthy ones compactly unless the full view is asked for. */
+const BRIEF_ABOVE = 8;
+/** After a meaning change, this many stale places are shown in full; the rest are listed by file and id. */
+const STALE_FULL = 5;
+/** Places that need no attention and no wording shown: found where expected and confirmed. */
+function isQuiet(r) {
+    return !r.stale && r.acked === undefined && ["ok", "moved", "reformatted"].includes(r.status);
+}
+/** "README.md m1,m3; docs/a.md m7": ids grouped by file, no wording. */
+function idsByFile(rs, withLine = false) {
+    const byFile = new Map();
+    for (const r of rs) {
+        const label = withLine && r.line !== undefined ? `${r.mention.id}:${r.line}` : r.mention.id;
+        byFile.set(r.mention.path, [...(byFile.get(r.mention.path) ?? []), label]);
+    }
+    return [...byFile].map(([p, ids]) => `${clip(p, 60)} ${ids.join(",")}`).join("; ");
+}
+export function formatClaimViews(views, view = "auto") {
     return views
         .map((v) => {
         const parts = [formatClaimHeader(v.claim)];
-        parts.push(v.mentions.length ? v.mentions.map((r) => mentionLine(r)).join("\n") : "  (no mentions registered)");
+        const brief = view === "brief" || (view === "auto" && v.mentions.length > BRIEF_ABOVE);
+        if (!v.mentions.length)
+            parts.push("  (no mentions registered)");
+        else if (!brief)
+            parts.push(v.mentions.map((r) => mentionLine(r)).join("\n"));
+        else {
+            const quiet = v.mentions.filter(isQuiet);
+            const loud = v.mentions.filter((r) => !isQuiet(r));
+            if (loud.length)
+                parts.push(loud.map((r) => mentionLine(r)).join("\n"));
+            if (quiet.length)
+                parts.push(`  ok (${quiet.length}, wording hidden: view "full" shows it): ${idsByFile(quiet, true)}`);
+        }
         if (v.outputs.length)
             parts.push("  generated outputs:\n" + v.outputs.map(outputLine).join("\n"));
         return parts.join("\n");
@@ -137,10 +166,17 @@ export function formatUpdate(u) {
     if (u.edits.length) {
         parts.push("edits:\n" + u.edits.map((e) => `  ${e.mention}: ${e.ok ? "ok" : "FAILED"} — ${e.message}`).join("\n"));
     }
+    if (u.accepted) {
+        parts.push(`accept_all: confirmed ${u.accepted.count} places${u.accepted.left.length ? `; left alone: ${u.accepted.left.join("; ")}` : ""}`);
+    }
     if (u.meaning) {
         if (u.staleMentions.length) {
-            parts.push(`Still saying the old meaning (${u.staleMentions.length}) — update with edits[{mention, text}], or accept if still true:\n` +
-                u.staleMentions.map((r) => mentionLine(r)).join("\n"));
+            // the first few in full, the rest by file and id: a claim with 19 places must not cost 19 blocks of context
+            const shown = u.staleMentions.slice(0, STALE_FULL);
+            const rest = u.staleMentions.slice(STALE_FULL);
+            parts.push(`Still saying the old meaning (${u.staleMentions.length}) — update with edits[{mention, text}], or accept if still true (accept_all confirms every remaining place):\n` +
+                shown.map((r) => mentionLine(r)).join("\n") +
+                (rest.length ? `\n  +${rest.length} more, wording not shown: ${idsByFile(rest)} (claim_get {ids:["${u.claim.id}"], view:"full"})` : ""));
         }
         else
             parts.push("All mentions confirmed against the new meaning.");

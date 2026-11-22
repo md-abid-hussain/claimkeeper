@@ -21,37 +21,37 @@
       "kind": "text",
       "path": "README.md",
       "rev": 1,
-      "note": "intro bullet",
       "anchor": "(ElevenLabs audio, SVG exports, Remotion renders) remember what they were made from",
-      "line": 11
+      "line": 11,
+      "note": "intro bullet"
     },
     {
       "id": "m2",
       "kind": "text",
       "path": "README.md",
       "rev": 1,
-      "note": "What it catches table",
       "anchor": "Audio `needs_regen` → the video that uses it `needs_regen` too (chained)",
-      "line": 25
+      "line": 25,
+      "note": "What it catches table"
     },
     {
       "id": "m5",
       "kind": "text",
       "path": "plugin/skills/claims/references/media.md",
       "rev": 1,
-      "note": "media reference rules",
       "anchor": "An input change marks the output `needs_regen`, and it chains: script → audio → video.",
-      "line": 15
+      "line": 15,
+      "note": "media reference rules"
     },
     {
       "id": "m6",
       "kind": "code",
       "path": "src/mcp/tools.ts",
       "rev": 1,
-      "note": "output tool description",
       "anchor": "with the inputs it was made from; it is then flagged when an input or claim meaning changes.",
-      "line": 214,
-      "block": "24b11df0d219"
+      "line": 296,
+      "block": "c5a4062f2634",
+      "note": "output tool description"
     }
   ],
   "next": 7

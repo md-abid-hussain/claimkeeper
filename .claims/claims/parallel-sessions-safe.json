@@ -1,0 +1,59 @@
+{
+  "id": "parallel-sessions-safe",
+  "desc": "Parallel sessions can write claims in the same folder at the same moment without losing each other's changes, because claimkeeper serializes writes with a short file lock; sessions in separate git worktrees each keep their own copy of .claims/ until it is merged.",
+  "keywords": [
+    "parallel sessions",
+    "lock",
+    "worktree",
+    "subagents"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "Parallel sessions can write claims in the same folder at the same moment without losing each other's changes, because claimkeeper serializes writes with a short file lock; sessions in separate git worktrees each keep their own copy of .claims/ until it is merged.",
+      "at": "2026-11-22T10:25:01.761Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README Limits",
+      "anchor": "Parallel sessions on one folder are safe: each tool call that writes takes a short file lock",
+      "line": 199
+    },
+    {
+      "id": "m2",
+      "kind": "text",
+      "path": "INSTALL.md",
+      "rev": 1,
+      "note": "INSTALL parallel sessions",
+      "anchor": "Several sessions or subagents may write claims at the same time in one folder: writes are serialized by a short lock, so none is lost.",
+      "line": 120
+    },
+    {
+      "id": "m3",
+      "kind": "code",
+      "path": "src/core/store.ts",
+      "rev": 1,
+      "note": "the lock",
+      "anchor": "export function withStoreLock<T>(root: string, fn: () => T): T {",
+      "line": 103,
+      "block": "20fb0c4d282b"
+    },
+    {
+      "id": "m4",
+      "kind": "code",
+      "path": "test/feedback.test.ts",
+      "rev": 1,
+      "note": "concurrency test",
+      "anchor": "test(\"sessions registering places on the same claim at the same time keep every place\"",
+      "line": 108,
+      "block": "c0254d09d3b0"
+    }
+  ],
+  "next": 5
+}

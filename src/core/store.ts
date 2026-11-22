@@ -94,6 +94,17 @@ export function withLock<T>(path: string, fn: () => T, timeoutMs = 2000): T {
   }
 }
 
+/**
+ * Serialize claim writes from parallel sessions (each agent session runs its own server process).
+ * Held around a whole tool call, so the read-modify-write of a claim file is never interleaved
+ * with another session's: two sessions registering places on the same claim both keep theirs.
+ * If the lock can't be had in 5 s (a crashed holder) the call proceeds unlocked, like withLock.
+ */
+export function withStoreLock<T>(root: string, fn: () => T): T {
+  if (!existsSync(join(root, STORE_DIR, "config.json"))) return fn();
+  return withLock(join(root, STORE_DIR, "store"), fn, 5000);
+}
+
 // ---------- validation of store data (it may come from an untrusted repo) ----------
 
 const str = (v: unknown): v is string => typeof v === "string";
