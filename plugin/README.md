@@ -167,7 +167,7 @@ Mechanical work is fine on a small, cheap model (Haiku-class): registering place
 
 ## CLI
 
-Not on npm yet: run it from a checkout with `node <checkout>/plugin/dist/cli.js`.
+Install from npm with `npm install -g claimkeeper` (or run one command with `npx -y claimkeeper <command>`); from a checkout use `node <checkout>/plugin/dist/cli.js`.
 
 ```bash
 node plugin/dist/cli.js init [--private]

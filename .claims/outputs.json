@@ -7,7 +7,7 @@
       "inputs": [
         {
           "ref": "README.md",
-          "hash": "15916:4c84051bb686c416"
+          "hash": "16001:68f89303f60671e1"
         }
       ],
       "claims": {
@@ -26,7 +26,7 @@
         "never-regenerates-media": 1,
         "no-network": 1,
         "node-only-no-deps": 5,
-        "npx-cli": 1,
+        "npx-cli": 2,
         "numbers-tied-to-code": 1,
         "opt-in-per-project": 1,
         "parallel-sessions-safe": 1,
@@ -43,11 +43,11 @@
         "untrusted-store-contained": 1,
         "user-decides-meaning": 1
       },
-      "fp": "15916:4c84051bb686c416",
+      "fp": "16001:68f89303f60671e1",
       "meta": {
         "tool": "npm run build"
       },
-      "at": "2026-11-22T11:42:10.662Z"
+      "at": "2026-11-22T11:51:27.048Z"
     }
   ]
 }

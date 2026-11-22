@@ -11,7 +11,6 @@ The plugin's hooks are the main mechanism, because they run while the agent work
 
 ## Other
 
-- Publish to npm so `npx claimkeeper` works without a checkout.
 - Remotion helper: list a composition's imported assets automatically as `output record` inputs.
 - Optional transcript check for audio: compare a speech-to-text transcript of generated audio with its script.
 - Merge helper for `.claims/` when parallel sessions in separate git worktrees changed the same claim.

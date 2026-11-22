@@ -23,24 +23,30 @@ The plugin brings the MCP server, skills, subagents and hooks. Start a new sessi
 
 ## 2. Every other agent: get claimkeeper once
 
-Clone it to a stable place outside the project (one copy serves every project):
+Install it globally from npm (one copy serves every project and gives a stable path for the git hook):
+
+```bash
+npm install -g claimkeeper
+```
+
+No global install? `npx -y claimkeeper <command>` runs any command once (use it for the MCP entry in step 3; the pre-commit check in step 6 needs the global install or a checkout). Or clone it:
 
 ```bash
 git clone https://github.com/md-abid-hussain/claimkeeper ~/.claimkeeper
 ```
 
-Below, `CK` means the absolute path of that folder (for example `/home/me/.claimkeeper` or `C:/Users/me/.claimkeeper`), and `PROJECT` means the absolute path of the user's project root. Use absolute paths everywhere.
+Below, `CK` means the absolute folder that holds claimkeeper's `plugin/` folder: `$(npm root -g)/claimkeeper` for the global install, or the clone (for example `/home/me/.claimkeeper` or `C:/Users/me/.claimkeeper`). `claimkeeper` means the command (on the PATH after a global install; from a clone use `node CK/plugin/dist/cli.js` instead). `PROJECT` means the absolute path of the user's project root. Use absolute paths everywhere.
 
 ## 3. Register the MCP server
 
-Command `node`, arguments `CK/plugin/dist/cli.js mcp --root PROJECT`. Prefer the project-level config file. `--root` tells the server which project to use, so it doesn't depend on the client's working directory.
+Command `claimkeeper`, arguments `mcp --root PROJECT` (without a global install: command `npx`, arguments `-y claimkeeper mcp --root PROJECT`; from a clone: command `node`, arguments `CK/plugin/dist/cli.js mcp --root PROJECT`; on Windows a client may need `cmd` with `/c npx ...`). Prefer the project-level config file. `--root` tells the server which project to use, so it doesn't depend on the client's working directory.
 
 Codex (`.codex/config.toml` in the project, or `~/.codex/config.toml`):
 
 ```toml
 [mcp_servers.claimkeeper]
-command = "node"
-args = ["CK/plugin/dist/cli.js", "mcp", "--root", "PROJECT"]
+command = "claimkeeper"
+args = ["mcp", "--root", "PROJECT"]
 ```
 
 Cursor (`.cursor/mcp.json` in the project):
@@ -49,8 +55,8 @@ Cursor (`.cursor/mcp.json` in the project):
 {
   "mcpServers": {
     "claimkeeper": {
-      "command": "node",
-      "args": ["CK/plugin/dist/cli.js", "mcp", "--root", "PROJECT"]
+      "command": "claimkeeper",
+      "args": ["mcp", "--root", "PROJECT"]
     }
   }
 }
@@ -84,7 +90,7 @@ Full guide: CK/plugin/skills/claims/SKILL.md
 ## 5. Turn tracking on
 
 ```bash
-node CK/plugin/dist/cli.js init --root PROJECT
+claimkeeper init --root PROJECT
 ```
 
 Add `--private` to keep the claim store out of git.
@@ -94,7 +100,7 @@ Add `--private` to keep the claim store out of git.
 Agents other than Claude Code don't run claimkeeper's hooks, so the git pre-commit check is the safety net: it blocks a commit while tracked claims need attention (bypass once with `git commit --no-verify`). Install it only if the user agrees:
 
 ```bash
-node CK/plugin/dist/cli.js install-git-hook --root PROJECT
+claimkeeper install-git-hook --root PROJECT
 ```
 
 It adds a marked block to `.git/hooks/pre-commit` and keeps any existing hook. With a hook manager (husky, lefthook) it prints the lines to add instead of editing its files. Remove it with `uninstall-git-hook`. The hook calls claimkeeper at the path it was installed from: if claimkeeper moves or a plugin update changes that path, the hook says so at each commit instead of checking, until you run `install-git-hook` again.
@@ -130,4 +136,4 @@ List every file you created or edited: the MCP config, the skills folder, the in
 | Hints on read, drift warnings after edits, end-of-turn check | hooks | the agent runs `claims_in` and `claims_check` itself, as instructed |
 | Pre-commit check | optional | recommended |
 
-Updating claimkeeper: `git -C CK pull`.
+Updating claimkeeper: `npm install -g claimkeeper@latest` (or `git -C CK pull` for a clone).
