@@ -4,6 +4,8 @@
 
 **Keep what your product says about itself consistent — across the README, docs, landing page, pitch text, demo script, voiceover, SVGs and the demo video — while coding agents keep changing things.**
 
+[![M8ven Score](https://m8ven.ai/badge/mcp/md-abid-hussain-claimkeeper-136hjc?v=b555fb39f6f022b346726380c3413ec0)](https://m8ven.ai/mcp/md-abid-hussain-claimkeeper-136hjc?s=readme)
+
 You're building a hackathon project with Claude Code. The README says *"everything runs on-device"*, the landing page says *"100% private"*, the voiceover says *"no audio leaves your laptop"*, an SVG says *"on-device"*, and the Remotion video shows it in scene 2. Three sessions later the agent adds cloud sync, updates one file, and your submission contradicts itself.
 
 Git is the tool humans and agents share for code. claimkeeper is the tool the **agent** uses for claims; you watch it through `git diff .claims/`, a status line and an activity log.

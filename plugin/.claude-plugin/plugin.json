@@ -1,6 +1,6 @@
 {
   "name": "claimkeeper",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Keep product claims consistent across README, docs, landing page, pitch text, scripts, SVGs, voiceovers and demo videos as coding agents change things. Opt-in per project.",
   "author": { "name": "claimkeeper contributors" },
   "license": "MIT",

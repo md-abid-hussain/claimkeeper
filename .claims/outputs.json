@@ -7,7 +7,7 @@
       "inputs": [
         {
           "ref": "README.md",
-          "hash": "15101:1f443b427013678f"
+          "hash": "15283:36d04add056cf04f"
         }
       ],
       "claims": {
@@ -43,11 +43,11 @@
         "untrusted-store-contained": 1,
         "user-decides-meaning": 1
       },
-      "fp": "15101:1f443b427013678f",
+      "fp": "15283:36d04add056cf04f",
       "meta": {
         "tool": "npm run build"
       },
-      "at": "2026-11-22T10:25:06.873Z"
+      "at": "2026-11-22T11:30:09.884Z"
     }
   ]
 }

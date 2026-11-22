@@ -30,7 +30,7 @@ export const INSTRUCTIONS =
   "Tracks product claims across docs, pages, scripts and media. Before editing product-facing text call claims_in {path} (or claim_get); register claims with claim_add; reword with claim_update edits; run claims_check before finishing. Only the user decides a meaning change (decided_by + why). Never regenerate media without their yes.";
 
 const SUPPORTED = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
-const VERSION = "0.3.0";
+const VERSION = "0.4.0";
 
 interface Request {
   jsonrpc: "2.0";
