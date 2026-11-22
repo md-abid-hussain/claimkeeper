@@ -36,7 +36,7 @@ import {
   scanFile,
   statusText,
   toggle
-} from "./chunks/chunk-QHVKJSRN.js";
+} from "./chunks/chunk-FJCQI5AX.js";
 
 // src/cli.ts
 import { resolve as resolve2 } from "node:path";
@@ -336,6 +336,7 @@ function stop(input) {
   const older = keys.length - fresh.size;
   refreshState(store);
   const meaning = [];
+  const meaningIds = /* @__PURE__ */ new Set();
   for (const id of store.claimIds()) {
     const c = store.getClaim(id);
     const changed = baseline ? c.rev > (baseline[id] ?? 1) : c.history.some((h) => h.rev === c.rev && h.at > since);
@@ -345,9 +346,17 @@ function stop(input) {
       const cur = c.history.find((h) => h.rev === c.rev);
       const by = cur?.by ? ` (${cur.by === "user" ? "user decided" : "from user's request"})` : "";
       meaning.push(`  ${id}: "${from}" \u2192 "${to}"${by}`);
+      meaningIds.add(id);
     }
   }
-  const mentionNew = res.mentionIssues.filter((r) => fresh.has(`${r.claim}#${r.mention.id}:${r.status}:${r.stale}`)).map((r) => mentionLine(r, true));
+  const freshMentions = res.mentionIssues.filter((r) => fresh.has(`${r.claim}#${r.mention.id}:${r.status}:${r.stale}`));
+  const oldMeaning = freshMentions.filter((r) => r.stale && meaningIds.has(r.claim) && r.status !== "text_not_found" && r.status !== "file_not_found");
+  const byClaim = /* @__PURE__ */ new Map();
+  for (const r of oldMeaning) byClaim.set(r.claim, [...byClaim.get(r.claim) ?? [], r.mention.id]);
+  const mentionNew = [
+    ...freshMentions.filter((r) => !oldMeaning.includes(r)).map((r) => mentionLine(r, true)),
+    ...[...byClaim].map(([claim, ids]) => `  ${claim}: ${ids.length} places still say the old meaning (${ids.slice(0, 8).join(", ")}${ids.length > 8 ? ", \u2026" : ""}): update them, or claim_update accept_all if they still hold`)
+  ];
   const outputNew = res.outputIssues.filter((o) => fresh.has(`out:${o.output.id}:${o.status}`)).map(outputLine);
   if (!meaning.length && !mentionNew.length && !outputNew.length) {
     logActivity(store, `stop: ok${older ? ` (${older} older issues)` : ""}`);
@@ -449,7 +458,7 @@ async function main(argv) {
   const [cmd, ...args] = all;
   switch (cmd) {
     case "mcp": {
-      const { startServer } = await import("./chunks/server-WPSL5QVC.js");
+      const { startServer } = await import("./chunks/server-R62DSM34.js");
       await startServer();
       return -1;
     }

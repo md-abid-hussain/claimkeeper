@@ -393,6 +393,24 @@ export class Store {
     return isGitIgnored(this.root, rel);
   }
 
+  /**
+   * Run fn, then put every claim file back exactly as it was: a dry run that shows what a write
+   * would do without leaving anything behind. The caller holds the store lock, so no other session
+   * sees the temporary state or has its own write undone.
+   */
+  rollback<T>(fn: () => T): T {
+    const dirs = [join(this.dir, "claims"), join(this.localDir, "claims")];
+    const before = new Map<string, string>();
+    const files = (d: string) => (existsSync(d) ? readdirSync(d).map((f) => join(d, f)) : []);
+    for (const d of dirs) for (const p of files(d)) before.set(p, readFileSync(p, "utf8"));
+    try {
+      return fn();
+    } finally {
+      for (const d of dirs) for (const p of files(d)) if (!before.has(p)) rmSync(p, { force: true });
+      for (const [p, content] of before) if (!existsSync(p) || readFileSync(p, "utf8") !== content) writeFileSync(p, content, "utf8");
+    }
+  }
+
   // ---------- outputs ----------
 
   outputs(local: boolean): Output[] {

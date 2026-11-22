@@ -167,11 +167,11 @@ function tokenize(src) {
   }
   return out;
 }
-function pickNearest(lines, hint) {
+function pickNearest(lines2, hint) {
   if (hint === void 0) return 0;
   let best = 0;
-  for (let i = 1; i < lines.length; i++) {
-    if (Math.abs(lines[i] - hint) < Math.abs(lines[best] - hint)) best = i;
+  for (let i = 1; i < lines2.length; i++) {
+    if (Math.abs(lines2[i] - hint) < Math.abs(lines2[best] - hint)) best = i;
   }
   return best;
 }
@@ -180,12 +180,12 @@ function locate(input, anchor, hint, fuzzy = true) {
   const content = fx.content;
   const exact = allIndexes(content, anchor);
   if (exact.length) {
-    const lines = exact.map((o) => fx.line(o));
-    const k = pickNearest(lines, hint);
+    const lines2 = exact.map((o) => fx.line(o));
+    const k = pickNearest(lines2, hint);
     const start2 = exact[k];
     return {
-      best: { mode: "exact", start: start2, end: start2 + anchor.length, line: lines[k], similarity: 1 },
-      others: lines.filter((_, i) => i !== k)
+      best: { mode: "exact", start: start2, end: start2 + anchor.length, line: lines2[k], similarity: 1 },
+      others: lines2.filter((_, i) => i !== k)
     };
   }
   const nc = fx.norm;
@@ -198,12 +198,12 @@ function locate(input, anchor, hint, fuzzy = true) {
         const endIdx = nc.map[h + na.length - 1];
         return [start3, endIdx + 1];
       });
-      const lines = ranges.map((r) => fx.line(r[0]));
-      const k = pickNearest(lines, hint);
+      const lines2 = ranges.map((r) => fx.line(r[0]));
+      const k = pickNearest(lines2, hint);
       const [start2, end2] = ranges[k];
       return {
-        best: { mode: "normalized", start: start2, end: end2, line: lines[k], similarity: 1 },
-        others: lines.filter((_, i) => i !== k)
+        best: { mode: "normalized", start: start2, end: end2, line: lines2[k], similarity: 1 },
+        others: lines2.filter((_, i) => i !== k)
       };
     }
   }
@@ -263,15 +263,15 @@ function expandToSentence(content, start, end) {
   return [s, e];
 }
 function blockAt(content, line) {
-  const lines = content.split(/\r?\n/);
+  const lines2 = content.split(/\r?\n/);
   const startIdx = line - 1;
-  if (startIdx < 0 || startIdx >= lines.length) return "";
-  if (/[;,]\s*$/.test(lines[startIdx]) && !lines[startIdx].includes("{")) return lines[startIdx];
+  if (startIdx < 0 || startIdx >= lines2.length) return "";
+  if (/[;,]\s*$/.test(lines2[startIdx]) && !lines2[startIdx].includes("{")) return lines2[startIdx];
   const out = [];
   let depth = 0;
   let opened = false;
-  for (let i = startIdx; i < lines.length && out.length < 400; i++) {
-    const l = lines[i];
+  for (let i = startIdx; i < lines2.length && out.length < 400; i++) {
+    const l = lines2[i];
     out.push(l);
     for (const ch of l) {
       if (ch === "{") {
@@ -283,10 +283,10 @@ function blockAt(content, line) {
     if (!opened && i - startIdx >= 2) break;
   }
   const indent = (s) => s.length - s.trimStart().length;
-  const base = indent(lines[startIdx]);
-  const res = [lines[startIdx]];
-  for (let i = startIdx + 1; i < lines.length && res.length < 400; i++) {
-    const l = lines[i];
+  const base = indent(lines2[startIdx]);
+  const res = [lines2[startIdx]];
+  for (let i = startIdx + 1; i < lines2.length && res.length < 400; i++) {
+    const l = lines2[i];
     if (l.trim() === "") {
       res.push(l);
       continue;
@@ -298,11 +298,11 @@ function blockAt(content, line) {
   return res.join("\n");
 }
 function contextAround(content, line, radius) {
-  const lines = content.split(/\r?\n/);
+  const lines2 = content.split(/\r?\n/);
   const from = Math.max(1, line - radius);
-  const to = Math.min(lines.length, line + radius);
+  const to = Math.min(lines2.length, line + radius);
   const out = [];
-  for (let i = from; i <= to; i++) out.push(`${String(i).padStart(5)}| ${lines[i - 1]}`);
+  for (let i = from; i <= to; i++) out.push(`${String(i).padStart(5)}| ${lines2[i - 1]}`);
   return out.join("\n");
 }
 var CONTROL_RANGES = [
@@ -336,7 +336,7 @@ function where(r) {
   if (r.line !== void 0) return `${path}:${r.line}`;
   return path;
 }
-function mentionLine(r, withClaim = false) {
+function mentionLine(r, withClaim = false, seen) {
   const m = r.mention;
   const id = withClaim ? `${r.claim}#${m.id}` : m.id;
   const flags = [r.status === "unchecked" ? "check-by-hand" : r.status];
@@ -357,8 +357,12 @@ function mentionLine(r, withClaim = false) {
   }
   if (r.status === "code_changed") line += `
         the code block backing this claim changed: verify the claim still holds, then accept`;
-  if (r.stale && r.staleFrom !== void 0) line += `
+  if (r.stale && r.staleFrom !== void 0) {
+    const key = `${r.claim}|${r.staleFrom}`;
+    if (!seen?.has(key)) line += `
         confirmed for old meaning: "${clip(r.staleFrom, 120)}"`;
+    seen?.add(key);
+  }
   if (m.kind === "svg" || m.kind === "image") line += `
         visual: open ${clip(m.path, 160)} to look at it`;
   if (r.alsoAt?.length) line += `
@@ -395,6 +399,9 @@ function formatClaimHeader(c) {
   rev ${h.rev} (${oneLine(h.at).slice(0, 10)}${decided(h)}): "${clip(h.desc, 120)}"`;
   return s;
 }
+function lines(rs, withClaim = false, seen = /* @__PURE__ */ new Set()) {
+  return rs.map((r) => mentionLine(r, withClaim, seen)).join("\n");
+}
 var BRIEF_ABOVE = 8;
 var STALE_FULL = 5;
 function isQuiet(r) {
@@ -413,11 +420,11 @@ function formatClaimViews(views, view = "auto") {
     const parts = [formatClaimHeader(v.claim)];
     const brief = view === "brief" || view === "auto" && v.mentions.length > BRIEF_ABOVE;
     if (!v.mentions.length) parts.push("  (no mentions registered)");
-    else if (!brief) parts.push(v.mentions.map((r) => mentionLine(r)).join("\n"));
+    else if (!brief) parts.push(lines(v.mentions));
     else {
       const quiet = v.mentions.filter(isQuiet);
       const loud = v.mentions.filter((r) => !isQuiet(r));
-      if (loud.length) parts.push(loud.map((r) => mentionLine(r)).join("\n"));
+      if (loud.length) parts.push(lines(loud));
       if (quiet.length) parts.push(`  ok (${quiet.length}, wording hidden: view "full" shows it): ${idsByFile(quiet, true)}`);
     }
     if (v.outputs.length) parts.push("  generated outputs:\n" + v.outputs.map(outputLine).join("\n"));
@@ -451,7 +458,7 @@ function formatCheck(c) {
   }
   const parts = [head];
   if (c.mentionIssues.length) parts.push(`Mentions needing attention (${c.mentionIssues.length}):
-` + c.mentionIssues.map((r) => mentionLine(r, true)).join("\n"));
+` + lines(c.mentionIssues, true));
   if (c.outputIssues.length) {
     parts.push(
       `Generated outputs needing attention (${c.outputIssues.length}):
@@ -483,7 +490,8 @@ function formatUpdate(u) {
       const rest = u.staleMentions.slice(STALE_FULL);
       parts.push(
         `Still saying the old meaning (${u.staleMentions.length}) \u2014 update with edits[{mention, text}], or accept if still true (accept_all confirms every remaining place):
-` + shown.map((r) => mentionLine(r)).join("\n") + (rest.length ? `
+` + // the old meaning is in the MEANING CHANGED block above: not repeated per place
+        lines(shown, false, /* @__PURE__ */ new Set([`${u.claim.id}|${u.meaning.from}`])) + (rest.length ? `
   +${rest.length} more, wording not shown: ${idsByFile(rest)} (claim_get {ids:["${u.claim.id}"], view:"full"})` : "")
       );
     } else parts.push("All mentions confirmed against the new meaning.");
@@ -500,7 +508,7 @@ function formatUpdate(u) {
 function formatInFile(r) {
   const parts = [];
   parts.push(r.mentions.length ? `Claims mentioned in ${r.path}:
-${r.mentions.map((m) => mentionLine(m, true)).join("\n")}` : `No registered claims in ${r.path}.`);
+${lines(r.mentions, true)}` : `No registered claims in ${r.path}.`);
   if (r.outputAt) parts.push(`${r.path} is a generated output:
 ${outputLine(r.outputAt)}`);
   if (r.outputsFrom.length) parts.push(`Outputs generated from ${r.path}:
@@ -1015,6 +1023,23 @@ var Store = class _Store {
     if (/^[a-z]+:\/\//i.test(rel)) return false;
     if (!this.config().share) return false;
     return isGitIgnored(this.root, rel);
+  }
+  /**
+   * Run fn, then put every claim file back exactly as it was: a dry run that shows what a write
+   * would do without leaving anything behind. The caller holds the store lock, so no other session
+   * sees the temporary state or has its own write undone.
+   */
+  rollback(fn) {
+    const dirs = [join2(this.dir, "claims"), join2(this.localDir, "claims")];
+    const before = /* @__PURE__ */ new Map();
+    const files = (d) => existsSync2(d) ? readdirSync2(d).map((f) => join2(d, f)) : [];
+    for (const d of dirs) for (const p of files(d)) before.set(p, readFileSync(p, "utf8"));
+    try {
+      return fn();
+    } finally {
+      for (const d of dirs) for (const p of files(d)) if (!before.has(p)) rmSync(p, { force: true });
+      for (const [p, content] of before) if (!existsSync2(p) || readFileSync(p, "utf8") !== content) writeFileSync(p, content, "utf8");
+    }
   }
   // ---------- outputs ----------
   outputs(local) {
@@ -1611,6 +1636,7 @@ function addClaimWithMentions(store, input) {
       return { path: m.path, ok: false, error: e.message };
     }
   });
+  if (!created) syncMoved(store, claim);
   return { claim, created, mentions };
 }
 function getClaims(store, ids, opts = {}) {
@@ -1643,6 +1669,18 @@ function confirm(m, claim) {
     if (rest) m.note = rest;
     else delete m.note;
   }
+}
+function syncMoved(store, claim) {
+  const contents = /* @__PURE__ */ new Map();
+  const sides = /* @__PURE__ */ new Set();
+  for (const ref of store.mentions(claim.id)) {
+    const r = resolveMention(store, claim, ref, { contents });
+    if (r.status === "moved" && r.line !== void 0 && ref.mention.line !== r.line) {
+      ref.mention.line = r.line;
+      sides.add(ref.local);
+    }
+  }
+  for (const local of sides) store.saveMentionSide(claim.id, local);
 }
 function reanchor(store, claim, ref, anchor, line) {
   const m = ref.mention;
@@ -1780,6 +1818,7 @@ function updateClaim(store, input) {
       edits.push({ mention: e.mention, ok: false, message: err.message });
     }
   }
+  syncMoved(store, claim);
   let accepted;
   if (input.acceptAll) {
     const edited = new Set((input.edits ?? []).map((e) => e.mention.slice(e.mention.lastIndexOf("#") + 1)));
@@ -1943,7 +1982,7 @@ function scanFile(store, path) {
   const rel = relPath(store.root, path);
   const content = readText(absPath(store.root, rel));
   if (content === void 0) return [];
-  const lines = content.split(/\r?\n/);
+  const lines2 = content.split(/\r?\n/);
   const hits = [];
   for (const id of store.claimIds()) {
     const claim = store.getClaim(id);
@@ -1955,13 +1994,13 @@ function scanFile(store, path) {
       const hit = locate(content, r.mention.anchor, void 0, false).best;
       if (hit && !registeredHere.has(hit.line) && !seen.has(hit.line)) {
         seen.add(hit.line);
-        hits.push({ claim: id, line: hit.line, text: lines[hit.line - 1].trim().slice(0, 160), why: `same wording as ${id}#${r.mention.id}` });
+        hits.push({ claim: id, line: hit.line, text: lines2[hit.line - 1].trim().slice(0, 160), why: `same wording as ${id}#${r.mention.id}` });
       }
     }
     if (!claim.keywords.length) continue;
     const kw = new Set(claim.keywords);
     const need = Math.min(2, kw.size);
-    lines.forEach((l, i) => {
+    lines2.forEach((l, i) => {
       const line = i + 1;
       if (seen.has(line) || registeredHere.has(line)) return;
       const words = new Set(tokenize(l).map((t) => t.word));
@@ -2087,10 +2126,10 @@ function logActivity(store, line) {
   } catch {
   }
 }
-function readLog(store, lines = 30) {
+function readLog(store, lines2 = 30) {
   const path = logPath(store);
   if (!existsSync5(path)) return "(no activity yet)";
-  return readFileSync3(path, "utf8").trimEnd().split("\n").slice(-lines).join("\n");
+  return readFileSync3(path, "utf8").trimEnd().split("\n").slice(-lines2).join("\n");
 }
 function statePath(store) {
   return join3(store.localDir, "state.json");

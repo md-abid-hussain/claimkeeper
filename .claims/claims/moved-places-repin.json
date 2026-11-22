@@ -1,0 +1,50 @@
+{
+  "id": "moved-places-repin",
+  "desc": "A write tool that touches a claim re-pins the line of its places that only moved, so the move arrows clear; read tools and hooks never write.",
+  "keywords": [
+    "moved",
+    "re-pinned",
+    "arrow",
+    "line hint"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "A write tool that touches a claim re-pins the line of its places that only moved, so the move arrows clear; read tools and hooks never write.",
+      "at": "2026-11-22T15:08:28.723Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README catches table",
+      "anchor": "A moved place is re-pinned to its new line the next time a write tool touches its claim.",
+      "line": 23
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": "src/core/ops.ts",
+      "rev": 1,
+      "note": "the re-pin",
+      "anchor": "function syncMoved(store: Store, claim: Claim): void {",
+      "line": 331,
+      "block": "a63343b7c6d1"
+    },
+    {
+      "id": "m3",
+      "kind": "code",
+      "path": "test/feedback.test.ts",
+      "rev": 1,
+      "note": "test",
+      "anchor": "test(\"a place that only moved is re-pinned by the next write to its claim, so the arrow clears\"",
+      "line": 281,
+      "block": "04ca31564b36"
+    }
+  ],
+  "next": 4
+}

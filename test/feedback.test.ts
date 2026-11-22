@@ -7,6 +7,7 @@ import { join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, test } from "node:test";
 import * as ops from "../src/core/ops.ts";
 import type { Store } from "../src/core/store.ts";
+import { sessionStart, stop } from "../src/hooks/hooks.ts";
 import { INSTRUCTIONS } from "../src/mcp/server.ts";
 import { TOOLS } from "../src/mcp/tools.ts";
 import { HACKATHON, makeProject, type Project } from "./helpers.ts";
@@ -254,8 +255,55 @@ describe("what the agent reads stays small", () => {
     const text = tool("claim_update").run({ claim: "stays-local", desc: "Recordings stay on the laptop unless the user exports them.", decided_by: "user", why: "user: allow export" });
     assert.match(text, /Still saying the old meaning \(19\)/);
     assert.match(text, /\+14 more, wording not shown: doc\.md m6,m7/);
-    assert.equal((text.match(/confirmed for old meaning/g) ?? []).length, 5, "only five places echo their old wording");
-    assert.ok(text.length < 3000, `output is ${text.length} chars`);
+    assert.equal((text.match(/confirmed for old meaning/g) ?? []).length, 0, "the old meaning is printed once, in the MEANING CHANGED block, not on every place");
+    assert.equal((text.match(/Recordings stay on the laptop\./g) ?? []).length, 1);
+    assert.ok(text.length < 2500, `output is ${text.length} chars`);
+  });
+
+  test("a list of stale places prints each old meaning once", () => {
+    tool("claim_update").run({ claim: "stays-local", desc: "Recordings stay on the laptop unless exported.", decided_by: "user", why: "user: allow export" });
+    const check = tool("claims_check").run({});
+    assert.equal((check.match(/confirmed for old meaning/g) ?? []).length, 1, "claims_check shows it on the first place only");
+    assert.equal((check.match(/STALE\(rev 1\)/g) ?? []).length, 19, "every place is still listed");
+  });
+
+  test("the Stop hook counts places that still carry a just-changed meaning instead of listing them again", () => {
+    process.env.CLAUDE_PROJECT_DIR = p.root;
+    sessionStart({ session_id: "s", source: "startup" });
+    tool("claim_update").run({ claim: "stays-local", desc: "Recordings stay on the laptop unless exported.", decided_by: "user", why: "user: allow export" });
+    const out = stop({ session_id: "s" }) as { decision?: string; reason?: string; systemMessage?: string };
+    assert.equal(out.decision, "block", "stale places are still a real problem");
+    assert.match(out.reason!, /stays-local: 19 places still say the old meaning \(m1, m2, m3, m4, m5, m6, m7, m8, …\)/);
+    assert.doesNotMatch(out.reason!, /Place 3 says/, "no place is listed again");
+    assert.ok(out.reason!.length < 700, `Stop output is ${out.reason!.length} chars`);
+  });
+
+  test("a place that only moved is re-pinned by the next write to its claim, so the arrow clears", () => {
+    p.write("doc.md", `# Doc\n\nA new intro paragraph.\n\nAnother new paragraph.\n\n${p.read("doc.md").split("\n").slice(2).join("\n")}`);
+    assert.match(tool("claim_get").run({ ids: ["stays-local"], view: "full" }), /doc\.md:3→\d+/, "the move is visible before");
+    const readOnly = tool("claim_get").run({ ids: ["stays-local"], view: "full" });
+    assert.match(readOnly, /→/, "reading never writes");
+    tool("claim_update").run({ claim: "stays-local", keywords: ["laptop", "recordings"] });
+    assert.doesNotMatch(tool("claim_get").run({ ids: ["stays-local"], view: "full" }), /→/, "arrows are gone");
+    assert.equal(ops.check(ops.requireStore(p.root)).mentionIssues.length, 0);
+  });
+
+  test("claim_add dry_run reports what would happen and writes nothing", () => {
+    const before = snapshot(p.root);
+    const text = tool("claim_add").run({
+      id: "second-claim",
+      desc: "A second claim.",
+      mentions: [{ path: "doc.md", anchor: "Place 4 says that every recording stays on this laptop and never leaves it." }, { path: "missing.md", anchor: "does not exist anywhere" }],
+      dry_run: true,
+    });
+    assert.match(text, /^DRY RUN, nothing was written/);
+    assert.match(text, /Added second-claim/);
+    assert.match(text, /FAILED missing\.md: file not found/);
+    assert.equal(snapshot(p.root), before, "the store is exactly as it was");
+    assert.ok(!existsSync(join(p.root, ".claims/claims/second-claim.json")));
+    const real = tool("claim_add").run({ id: "second-claim", desc: "A second claim.", mentions: [{ path: "doc.md", anchor: "Place 4 says that every recording stays on this laptop and never leaves it." }] });
+    assert.match(real, /^Added second-claim/);
+    assert.ok(existsSync(join(p.root, ".claims/claims/second-claim.json")), "the real call does write");
   });
 
   test("claim_get is brief for a claim with many places, full on request", () => {

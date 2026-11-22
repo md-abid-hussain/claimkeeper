@@ -1,18 +1,25 @@
 {
   "id": "compact-outputs",
-  "desc": "Tool output stays compact: claim_get lists healthy places without their wording once a claim has more than 8 places, and after a meaning change only the first 5 stale places are shown in full, the rest by file and id.",
+  "desc": "Tool output stays compact: claim_get lists healthy places without their wording once a claim has more than 8 places, and after a meaning change only the first 5 stale places are shown in full, the rest by file and id; each old meaning is printed once instead of on every place, and the end-of-turn check counts those places per claim instead of listing them again.",
   "keywords": [
     "brief",
     "stale places",
     "context",
     "claim_get"
   ],
-  "rev": 1,
+  "rev": 2,
   "history": [
     {
       "rev": 1,
       "desc": "Tool output stays compact: claim_get lists healthy places without their wording once a claim has more than 8 places, and after a meaning change only the first 5 stale places are shown in full, the rest by file and id.",
       "at": "2026-11-22T10:25:02.275Z"
+    },
+    {
+      "rev": 2,
+      "desc": "Tool output stays compact: claim_get lists healthy places without their wording once a claim has more than 8 places, and after a meaning change only the first 5 stale places are shown in full, the rest by file and id; each old meaning is printed once instead of on every place, and the end-of-turn check counts those places per claim instead of listing them again.",
+      "at": "2026-11-22T15:08:28.330Z",
+      "by": "user_request",
+      "why": "user review: output too long, old text repeated on each place, printed twice (claim_update and Stop hook)"
     }
   ],
   "mentions": [
@@ -20,39 +27,39 @@
       "id": "m1",
       "kind": "text",
       "path": "README.md",
-      "rev": 1,
-      "note": "README context budget",
+      "rev": 2,
       "anchor": "`claim_get` lists healthy places by file and id without wording once a claim has more than 8",
-      "line": 99
+      "line": 101,
+      "note": "README context budget"
     },
     {
       "id": "m2",
       "kind": "text",
       "path": "README.md",
-      "rev": 1,
-      "note": "README context budget",
+      "rev": 2,
       "anchor": "the first 5 stale places in full, the rest by file and id",
-      "line": 100
+      "line": 102,
+      "note": "README context budget"
     },
     {
       "id": "m3",
       "kind": "code",
       "path": "src/core/format.ts",
-      "rev": 1,
-      "note": "brief threshold",
+      "rev": 2,
       "anchor": "const BRIEF_ABOVE = 8;",
-      "line": 64,
-      "block": "cfe52680c55c"
+      "line": 78,
+      "block": "cfe52680c55c",
+      "note": "brief threshold"
     },
     {
       "id": "m4",
       "kind": "code",
       "path": "src/core/format.ts",
-      "rev": 1,
-      "note": "stale threshold",
+      "rev": 2,
       "anchor": "const STALE_FULL = 5;",
-      "line": 66,
-      "block": "f20ec836474c"
+      "line": 80,
+      "block": "f20ec836474c",
+      "note": "stale threshold"
     }
   ],
   "next": 5

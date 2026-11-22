@@ -20,7 +20,7 @@ The tool does the deterministic work (store, find, fetch, rewrite, fingerprint, 
 
 | Situation | What you get |
 |---|---|
-| Lines moved, text reflowed, wrapped in tags | Found anyway (exact → normalized → fuzzy). No false alarms. |
+| Lines moved, text reflowed, wrapped in tags | Found anyway (exact → normalized → fuzzy). No false alarms. A moved place is re-pinned to its new line the next time a write tool touches its claim. |
 | Wording at one place edited | `changed`, with the old and new wording side by side |
 | File renamed / deleted | `file_not_found` with likely new locations — never a crash |
 | Code that backs a claim changed | `code_changed`: verify the claim still holds |
@@ -99,7 +99,7 @@ Everything the agent sees costs context, so claimkeeper discloses progressively:
 | Writing claim wording / an output's input | only when something drifted or went stale |
 | End of turn | only **new** problems, top 5; blocks at most once each. A meaning change is shown to you, not sent back to the agent |
 | Fetching a claim | `claim_get` lists healthy places by file and id without wording once a claim has more than 8; places needing attention are always shown in full |
-| After a meaning change | the first 5 stale places in full, the rest by file and id |
+| After a meaning change | the first 5 stale places in full, the rest by file and id; the old meaning is printed once, not on every place, and the end-of-turn check counts these places per claim instead of listing them again |
 | Claims skill | under 500 words (a test enforces it), loaded when product-facing text or media is touched; media and meaning-change guidance in reference files read only when needed |
 | Setup and audit | in Claude Code, run in subagents: only their short report enters the session (other agents run them inline) |
 
@@ -152,7 +152,7 @@ claimkeeper makes no network requests and sends nothing anywhere: no telemetry, 
 | Tool | Purpose |
 |---|---|
 | `claims_config` | init, status, on/off, stop mode |
-| `claim_add` | create a claim and/or register its places (verified to exist; `conflict` for contradicting places) |
+| `claim_add` | create a claim and/or register its places (verified to exist; `conflict` for contradicting places; `dry_run` shows what would be registered and writes nothing) |
 | `claim_get` | list claims, or fetch claims with every place resolved live |
 | `claims_check` | only what needs attention, plus pending acknowledged items |
 | `claims_in` | claims in a file and outputs built from it; `scan` suggests unregistered mentions |

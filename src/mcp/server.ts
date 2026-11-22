@@ -48,7 +48,7 @@ function call(name: string, args: Record<string, unknown>): Result {
     const writes = MUTATING.has(name) && !(name === "claims_config" && args.action === "status");
     // parallel sessions each run their own server: serialize writes so none overwrites another's
     const text = writes ? withStoreLock(projectRoot(), () => tool.run(args)) : tool.run(args);
-    if (writes) trace(name, args, text);
+    if (writes && args.dry_run !== true) trace(name, args, text); // a dry run leaves nothing to log
     return reply(text);
   } catch (e) {
     // the agent gets the message; the stack goes to stderr (MCP logs), not into its context

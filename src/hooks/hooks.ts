@@ -298,6 +298,7 @@ export function stop(input: HookInput): HookOutput {
   refreshState(store);
 
   const meaning: string[] = [];
+  const meaningIds = new Set<string>();
   for (const id of store.claimIds()) {
     const c = store.getClaim(id);
     // by revision when the session recorded them (claims created since started at rev 1);
@@ -309,9 +310,19 @@ export function stop(input: HookInput): HookOutput {
       const cur = c.history.find((h) => h.rev === c.rev);
       const by = cur?.by ? ` (${cur.by === "user" ? "user decided" : "from user's request"})` : "";
       meaning.push(`  ${id}: "${from}" → "${to}"${by}`);
+      meaningIds.add(id);
     }
   }
-  const mentionNew = res.mentionIssues.filter((r) => fresh.has(`${r.claim}#${r.mention.id}:${r.status}:${r.stale}`)).map((r) => mentionLine(r, true));
+  const freshMentions = res.mentionIssues.filter((r) => fresh.has(`${r.claim}#${r.mention.id}:${r.status}:${r.stale}`));
+  // Places that merely still carry the old meaning of a claim changed this turn were already listed by
+  // claim_update: here they are counted per claim, not listed again (that doubled the output).
+  const oldMeaning = freshMentions.filter((r) => r.stale && meaningIds.has(r.claim) && r.status !== "text_not_found" && r.status !== "file_not_found");
+  const byClaim = new Map<string, string[]>();
+  for (const r of oldMeaning) byClaim.set(r.claim, [...(byClaim.get(r.claim) ?? []), r.mention.id]);
+  const mentionNew = [
+    ...freshMentions.filter((r) => !oldMeaning.includes(r)).map((r) => mentionLine(r, true)),
+    ...[...byClaim].map(([claim, ids]) => `  ${claim}: ${ids.length} places still say the old meaning (${ids.slice(0, 8).join(", ")}${ids.length > 8 ? ", …" : ""}): update them, or claim_update accept_all if they still hold`),
+  ];
   const outputNew = res.outputIssues.filter((o) => fresh.has(`out:${o.output.id}:${o.status}`)).map(outputLine);
 
   if (!meaning.length && !mentionNew.length && !outputNew.length) {

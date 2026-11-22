@@ -37,7 +37,7 @@ import {
   toggle,
   updateClaim,
   withStoreLock
-} from "./chunk-QHVKJSRN.js";
+} from "./chunk-FJCQI5AX.js";
 
 // node_modules/ajv/dist/compile/codegen/code.js
 var require_code = __commonJS({
@@ -23673,25 +23673,31 @@ ${c.claims} claims, ${c.mentions} mentions, ${c.outputs} outputs; ${c.mentionIss
   },
   {
     name: "claim_add",
-    description: "Create a claim (id + one-sentence meaning) and/or register the places it appears. On an existing claim, just pass mentions. Wording is verified to exist. Only adds records; changes no project file.",
+    description: "Create a claim (id + one-sentence meaning) and/or register the places it appears. On an existing claim, just pass mentions. Wording is verified to exist. dry_run previews without writing. Only adds records; changes no project file.",
     annotations: { title: "Add a claim or its places", ...ADDITIVE },
     inputSchema: obj(
       {
         id: str("lowercase-with-dashes, e.g. 'on-device'."),
         desc: str("One sentence: the meaning every place must agree with. Required for a new claim."),
         keywords: strArr("Words that signal this claim (for spotting unregistered mentions)."),
-        mentions: array(mentionSchema)
+        mentions: array(mentionSchema),
+        dry_run: bool("Check everything and show what would be registered (and which places would FAIL), but write nothing.")
       },
       ["id"]
     ),
     run(a) {
-      const r = addClaimWithMentions(store(), defined({ id: s(a, "id"), desc: os(a, "desc"), keywords: oarr(a, "keywords"), mentions: mentionInputs(a) }));
-      const lines = [r.created ? `Added ${r.claim.id} (rev 1): "${r.claim.desc}"` : `${r.claim.id} rev ${r.claim.rev}`];
-      for (const m of r.mentions) lines.push(m.ok ? mentionLine(m.resolved, true) : `  FAILED ${m.path}: ${m.error}`);
-      if (isUnbackedNumber(store(), r.claim)) {
-        lines.push(`  This claim states a number with no code place yet: find the constant that sets it (grep) and add it as {path, kind:"code", anchor:"<declaration line>"}.`);
-      }
-      return lines.join("\n");
+      const go = () => {
+        const r = addClaimWithMentions(store(), defined({ id: s(a, "id"), desc: os(a, "desc"), keywords: oarr(a, "keywords"), mentions: mentionInputs(a) }));
+        const lines = [r.created ? `Added ${r.claim.id} (rev 1): "${r.claim.desc}"` : `${r.claim.id} rev ${r.claim.rev}`];
+        for (const m of r.mentions) lines.push(m.ok ? mentionLine(m.resolved, true) : `  FAILED ${m.path}: ${m.error}`);
+        if (isUnbackedNumber(store(), r.claim)) {
+          lines.push(`  This claim states a number with no code place yet: find the constant that sets it (grep) and add it as {path, kind:"code", anchor:"<declaration line>"}.`);
+        }
+        return lines.join("\n");
+      };
+      if (!obool(a, "dry_run")) return go();
+      return `DRY RUN, nothing was written. claim_add would do this:
+${store().rollback(go)}`;
     }
   },
   {
@@ -23861,7 +23867,7 @@ function call(name, args) {
   try {
     const writes = MUTATING.has(name) && !(name === "claims_config" && args.action === "status");
     const text = writes ? withStoreLock(projectRoot(), () => tool.run(args)) : tool.run(args);
-    if (writes) trace(name, args, text);
+    if (writes && args.dry_run !== true) trace(name, args, text);
     return reply(text);
   } catch (e) {
     if (!(e instanceof ClaimsError)) process.stderr.write(`claimkeeper: ${e.stack ?? String(e)}

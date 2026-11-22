@@ -14,7 +14,12 @@ function where(r: ResolvedMention): string {
   return path;
 }
 
-export function mentionLine(r: ResolvedMention, withClaim = false): string {
+/**
+ * One place as one block of text. `seen` lets a list print each old meaning once: the first place
+ * confirmed for a given old meaning shows it, the rest only say STALE (a claim with 19 stale places
+ * must not repeat the same sentence 19 times).
+ */
+export function mentionLine(r: ResolvedMention, withClaim = false, seen?: Set<string>): string {
   const m = r.mention;
   const id = withClaim ? `${r.claim}#${m.id}` : m.id;
   const flags: string[] = [r.status === "unchecked" ? "check-by-hand" : r.status];
@@ -30,7 +35,11 @@ export function mentionLine(r: ResolvedMention, withClaim = false): string {
     else line += `  "${clip(r.current ?? m.anchor, 100)}"`;
   }
   if (r.status === "code_changed") line += `\n        the code block backing this claim changed: verify the claim still holds, then accept`;
-  if (r.stale && r.staleFrom !== undefined) line += `\n        confirmed for old meaning: "${clip(r.staleFrom, 120)}"`;
+  if (r.stale && r.staleFrom !== undefined) {
+    const key = `${r.claim}|${r.staleFrom}`;
+    if (!seen?.has(key)) line += `\n        confirmed for old meaning: "${clip(r.staleFrom, 120)}"`;
+    seen?.add(key);
+  }
   if (m.kind === "svg" || m.kind === "image") line += `\n        visual: open ${clip(m.path, 160)} to look at it`;
   if (r.alsoAt?.length) line += `\n        same wording also at lines ${r.alsoAt.join(", ")}`;
   if (r.candidates?.length) line += `\n        maybe moved to: ${r.candidates.map((c) => clip(c, 160)).join(", ")} (claim_update edits {mention, relink})`;
@@ -60,6 +69,11 @@ export function formatClaimHeader(c: Claim): string {
   return s;
 }
 
+/** A list of places, each old meaning shown once (see mentionLine). `seen` may be pre-seeded with ones already shown. */
+function lines(rs: ResolvedMention[], withClaim = false, seen = new Set<string>()): string {
+  return rs.map((r) => mentionLine(r, withClaim, seen)).join("\n");
+}
+
 /** Claims with more places than this list the healthy ones compactly unless the full view is asked for. */
 const BRIEF_ABOVE = 8;
 /** After a meaning change, this many stale places are shown in full; the rest are listed by file and id. */
@@ -86,11 +100,11 @@ export function formatClaimViews(views: ClaimView[], view: "auto" | "full" | "br
       const parts = [formatClaimHeader(v.claim)];
       const brief = view === "brief" || (view === "auto" && v.mentions.length > BRIEF_ABOVE);
       if (!v.mentions.length) parts.push("  (no mentions registered)");
-      else if (!brief) parts.push(v.mentions.map((r) => mentionLine(r)).join("\n"));
+      else if (!brief) parts.push(lines(v.mentions));
       else {
         const quiet = v.mentions.filter(isQuiet);
         const loud = v.mentions.filter((r) => !isQuiet(r));
-        if (loud.length) parts.push(loud.map((r) => mentionLine(r)).join("\n"));
+        if (loud.length) parts.push(lines(loud));
         if (quiet.length) parts.push(`  ok (${quiet.length}, wording hidden: view "full" shows it): ${idsByFile(quiet, true)}`);
       }
       if (v.outputs.length) parts.push("  generated outputs:\n" + v.outputs.map(outputLine).join("\n"));
@@ -130,7 +144,7 @@ export function formatCheck(c: CheckResult): string {
     return [`${head} ${pending ? "No new issues." : "No issues."}`, pending, numbers].filter(Boolean).join("\n\n");
   }
   const parts = [head];
-  if (c.mentionIssues.length) parts.push(`Mentions needing attention (${c.mentionIssues.length}):\n` + c.mentionIssues.map((r) => mentionLine(r, true)).join("\n"));
+  if (c.mentionIssues.length) parts.push(`Mentions needing attention (${c.mentionIssues.length}):\n` + lines(c.mentionIssues, true));
   if (c.outputIssues.length) {
     parts.push(
       `Generated outputs needing attention (${c.outputIssues.length}):\n` +
@@ -164,7 +178,8 @@ export function formatUpdate(u: UpdateResult): string {
       const rest = u.staleMentions.slice(STALE_FULL);
       parts.push(
         `Still saying the old meaning (${u.staleMentions.length}) — update with edits[{mention, text}], or accept if still true (accept_all confirms every remaining place):\n` +
-          shown.map((r) => mentionLine(r)).join("\n") +
+          // the old meaning is in the MEANING CHANGED block above: not repeated per place
+          lines(shown, false, new Set([`${u.claim.id}|${u.meaning.from}`])) +
           (rest.length ? `\n  +${rest.length} more, wording not shown: ${idsByFile(rest)} (claim_get {ids:["${u.claim.id}"], view:"full"})` : ""),
       );
     } else parts.push("All mentions confirmed against the new meaning.");
@@ -181,7 +196,7 @@ export function formatUpdate(u: UpdateResult): string {
 
 export function formatInFile(r: InFileResult): string {
   const parts: string[] = [];
-  parts.push(r.mentions.length ? `Claims mentioned in ${r.path}:\n${r.mentions.map((m) => mentionLine(m, true)).join("\n")}` : `No registered claims in ${r.path}.`);
+  parts.push(r.mentions.length ? `Claims mentioned in ${r.path}:\n${lines(r.mentions, true)}` : `No registered claims in ${r.path}.`);
   if (r.outputAt) parts.push(`${r.path} is a generated output:\n${outputLine(r.outputAt)}`);
   if (r.outputsFrom.length) parts.push(`Outputs generated from ${r.path}:\n${r.outputsFrom.map(outputLine).join("\n")}`);
   return parts.join("\n\n");

@@ -239,6 +239,7 @@ export function addClaimWithMentions(
       return { path: m.path, ok: false as const, error: (e as Error).message };
     }
   });
+  if (!created) syncMoved(store, claim);
   return { claim, created, mentions };
 }
 
@@ -320,6 +321,24 @@ function confirm(m: Mention, claim: Claim): void {
     if (rest) m.note = rest;
     else delete m.note;
   }
+}
+
+/**
+ * Places that only moved (same wording, different line) get their line hint refreshed whenever a
+ * write tool touches their claim, so "PLAN.md:267→270" clears itself. Read tools stay read-only and
+ * hooks never write; this only updates a line number, never wording or meaning.
+ */
+function syncMoved(store: Store, claim: Claim): void {
+  const contents = new Map<string, string | undefined>();
+  const sides = new Set<boolean>();
+  for (const ref of store.mentions(claim.id)) {
+    const r = resolveMention(store, claim, ref, { contents });
+    if (r.status === "moved" && r.line !== undefined && ref.mention.line !== r.line) {
+      ref.mention.line = r.line;
+      sides.add(ref.local);
+    }
+  }
+  for (const local of sides) store.saveMentionSide(claim.id, local);
 }
 
 /** The file already says it (reworded by hand): point the place at that wording and confirm it. */
@@ -471,6 +490,8 @@ export function updateClaim(
       edits.push({ mention: e.mention, ok: false, message: (err as Error).message });
     }
   }
+
+  syncMoved(store, claim);
 
   // accept_all: the agent checked that the remaining places still say the same thing; confirm them in one step
   let accepted: UpdateResult["accepted"];

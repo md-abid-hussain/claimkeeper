@@ -1,0 +1,49 @@
+{
+  "id": "dry-run-writes-nothing",
+  "desc": "claim_add with dry_run reports what would be registered and which places would fail, and leaves .claims exactly as it was.",
+  "keywords": [
+    "dry_run",
+    "preview",
+    "claim_add"
+  ],
+  "rev": 1,
+  "history": [
+    {
+      "rev": 1,
+      "desc": "claim_add with dry_run reports what would be registered and which places would fail, and leaves .claims exactly as it was.",
+      "at": "2026-11-22T15:08:28.405Z"
+    }
+  ],
+  "mentions": [
+    {
+      "id": "m1",
+      "kind": "text",
+      "path": "README.md",
+      "rev": 1,
+      "note": "README tools table",
+      "anchor": "`dry_run` shows what would be registered and writes nothing",
+      "line": 155
+    },
+    {
+      "id": "m2",
+      "kind": "code",
+      "path": "src/mcp/tools.ts",
+      "rev": 1,
+      "note": "schema",
+      "anchor": "dry_run: bool(\"Check everything and show what would be registered (and which places would FAIL), but write nothing.\"),",
+      "line": 174,
+      "block": "2df96a5cb7f7"
+    },
+    {
+      "id": "m3",
+      "kind": "code",
+      "path": "test/feedback.test.ts",
+      "rev": 1,
+      "note": "test",
+      "anchor": "test(\"claim_add dry_run reports what would happen and writes nothing\"",
+      "line": 291,
+      "block": "6fc9f73421cc"
+    }
+  ],
+  "next": 4
+}
