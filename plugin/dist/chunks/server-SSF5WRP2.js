@@ -23859,7 +23859,7 @@ function trace(name, args, result) {
   }
 }
 var INSTRUCTIONS = "Tracks product claims across docs, pages, scripts and media. Before editing product-facing text call claims_in {path} (or claim_get); register claims with claim_add; reword with claim_update edits; run claims_check before finishing. Only the user decides a meaning change (decided_by + why). Never regenerate media without their yes.";
-var VERSION = "0.5.1";
+var VERSION = "0.6.0";
 var reply = (text) => ({ content: [{ type: "text", text }] });
 function call(name, args) {
   const tool = TOOLS.find((t) => t.name === name);
