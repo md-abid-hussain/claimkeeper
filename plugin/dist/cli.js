@@ -458,7 +458,7 @@ async function main(argv) {
   const [cmd, ...args] = all;
   switch (cmd) {
     case "mcp": {
-      const { startServer } = await import("./chunks/server-SSF5WRP2.js");
+      const { startServer } = await import("./chunks/server-NZAF4VNC.js");
       await startServer();
       return -1;
     }

@@ -5,6 +5,7 @@
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import pkg from "../../package.json" with { type: "json" };
 import { logActivity, refreshState } from "../core/activity.ts";
 import { projectRoot } from "../core/project.ts";
 import { Store, withStoreLock } from "../core/store.ts";
@@ -35,7 +36,8 @@ function trace(name: string, args: Record<string, unknown>, result: string): voi
 export const INSTRUCTIONS =
   "Tracks product claims across docs, pages, scripts and media. Before editing product-facing text call claims_in {path} (or claim_get); register claims with claim_add; reword with claim_update edits; run claims_check before finishing. Only the user decides a meaning change (decided_by + why). Never regenerate media without their yes.";
 
-const VERSION = "0.6.0";
+/** The version is set once, in package.json; the build bundles it, so the server always reports the package's own version. */
+const VERSION = pkg.version;
 
 type Result = { content: Array<{ type: "text"; text: string }>; isError?: true };
 const reply = (text: string): Result => ({ content: [{ type: "text", text }] });

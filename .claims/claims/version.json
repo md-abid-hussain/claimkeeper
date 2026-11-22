@@ -80,15 +80,25 @@
       "note": "plugin manifest"
     },
     {
-      "id": "m3",
+      "id": "m4",
       "kind": "code",
       "path": "src/mcp/server.ts",
       "rev": 8,
-      "anchor": "const VERSION = \"0.6.0\";",
-      "line": 38,
-      "block": "3b822e139d2b",
-      "note": "MCP serverInfo"
+      "note": "MCP serverInfo takes package.json's version",
+      "anchor": "import pkg from \"../../package.json\" with { type: \"json\" };",
+      "line": 8,
+      "block": "f8f0d2d18ce6"
+    },
+    {
+      "id": "m5",
+      "kind": "code",
+      "path": "test/version.test.ts",
+      "rev": 8,
+      "note": "test",
+      "anchor": "test(\"the server reports package.json's version, and the plugin manifest matches it\"",
+      "line": 13,
+      "block": "b15d4c15e13c"
     }
   ],
-  "next": 4
+  "next": 6
 }

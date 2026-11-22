@@ -23566,6 +23566,56 @@ var StdioServerTransport = class {
   }
 };
 
+// package.json
+var package_default = {
+  name: "claimkeeper",
+  version: "0.6.0",
+  description: "Keep product claims consistent across docs, landing pages, pitch text, scripts, SVGs, voiceovers and demo videos while coding agents change things.",
+  license: "MIT",
+  repository: {
+    type: "git",
+    url: "git+https://github.com/md-abid-hussain/claimkeeper.git"
+  },
+  homepage: "https://github.com/md-abid-hussain/claimkeeper#readme",
+  bugs: "https://github.com/md-abid-hussain/claimkeeper/issues",
+  type: "module",
+  bin: {
+    claimkeeper: "plugin/dist/cli.js"
+  },
+  files: [
+    "plugin"
+  ],
+  engines: {
+    node: ">=22"
+  },
+  scripts: {
+    build: "node scripts/build.mjs",
+    typecheck: "tsc -p tsconfig.json --noEmit",
+    test: 'npm run typecheck && npm run build && node --test --test-timeout=60000 "test/**/*.test.ts"',
+    validate: "claude plugin validate . && claude plugin validate ./plugin",
+    icon: "node scripts/make-icon.mjs",
+    prepublishOnly: "npm test"
+  },
+  devDependencies: {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "@types/node": "24.19.2",
+    esbuild: "0.28.2",
+    typescript: "7.0.2",
+    zod: "4.6.7"
+  },
+  keywords: [
+    "mcp",
+    "mcp-server",
+    "claims",
+    "consistency",
+    "docs",
+    "coding-agents",
+    "claude-code",
+    "codex",
+    "cursor"
+  ]
+};
+
 // src/mcp/tools.ts
 var READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
 var ADDITIVE = { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false };
@@ -23859,7 +23909,7 @@ function trace(name, args, result) {
   }
 }
 var INSTRUCTIONS = "Tracks product claims across docs, pages, scripts and media. Before editing product-facing text call claims_in {path} (or claim_get); register claims with claim_add; reword with claim_update edits; run claims_check before finishing. Only the user decides a meaning change (decided_by + why). Never regenerate media without their yes.";
-var VERSION = "0.6.0";
+var VERSION = package_default.version;
 var reply = (text) => ({ content: [{ type: "text", text }] });
 function call(name, args) {
   const tool = TOOLS.find((t) => t.name === name);
