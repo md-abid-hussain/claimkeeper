@@ -1,11 +1,11 @@
 {
   "id": "version",
-  "desc": "The current claimkeeper version is 0.5.0, the same in the npm package, the plugin manifest and the MCP server.",
+  "desc": "The current claimkeeper version is 0.5.1, the same in the npm package, the plugin manifest and the MCP server.",
   "keywords": [
     "version",
     "0.2.0"
   ],
-  "rev": 6,
+  "rev": 7,
   "history": [
     {
       "rev": 1,
@@ -42,6 +42,13 @@
       "at": "2026-11-22T11:50:38.496Z",
       "by": "user",
       "why": "user chose to release 0.5.0 (SDK build) and publish to npm"
+    },
+    {
+      "rev": 7,
+      "desc": "The current claimkeeper version is 0.5.1, the same in the npm package, the plugin manifest and the MCP server.",
+      "at": "2026-11-22T15:28:03.038Z",
+      "by": "user",
+      "why": "user chose 0.5.1 for the next release"
     }
   ],
   "mentions": [
@@ -49,30 +56,30 @@
       "id": "m1",
       "kind": "code",
       "path": "package.json",
-      "rev": 6,
-      "anchor": "\"version\": \"0.5.0\"",
+      "rev": 7,
+      "anchor": "\"version\": \"0.5.1\"",
       "line": 3,
-      "block": "e45dda48f5f6",
+      "block": "28b87f4ee79a",
       "note": "npm package"
     },
     {
       "id": "m2",
       "kind": "code",
       "path": "plugin/.claude-plugin/plugin.json",
-      "rev": 6,
-      "anchor": "\"version\": \"0.5.0\"",
+      "rev": 7,
+      "anchor": "\"version\": \"0.5.1\"",
       "line": 3,
-      "block": "e45dda48f5f6",
+      "block": "28b87f4ee79a",
       "note": "plugin manifest"
     },
     {
       "id": "m3",
       "kind": "code",
       "path": "src/mcp/server.ts",
-      "rev": 6,
-      "anchor": "const VERSION = \"0.5.0\";",
+      "rev": 7,
+      "anchor": "const VERSION = \"0.5.1\";",
       "line": 38,
-      "block": "7017567f4627",
+      "block": "f834041d229a",
       "note": "MCP serverInfo"
     }
   ],
