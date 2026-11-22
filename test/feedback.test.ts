@@ -7,9 +7,10 @@ import { join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, test } from "node:test";
 import * as ops from "../src/core/ops.ts";
 import type { Store } from "../src/core/store.ts";
-import { handle, INSTRUCTIONS } from "../src/mcp/server.ts";
+import { INSTRUCTIONS } from "../src/mcp/server.ts";
 import { TOOLS } from "../src/mcp/tools.ts";
 import { HACKATHON, makeProject, type Project } from "./helpers.ts";
+import { connect } from "./mcp-client.ts";
 
 const CLI = resolve(import.meta.dirname, "../plugin/dist/cli.js");
 const HINTS = ["readOnlyHint", "destructiveHint", "idempotentHint", "openWorldHint"] as const;
@@ -32,15 +33,22 @@ function snapshot(dir: string): string {
 }
 
 describe("tool annotations", () => {
-  test("tools/list declares all four hints as booleans on every tool", () => {
-    const res = handle({ jsonrpc: "2.0", id: 1, method: "tools/list" }) as { result: { tools: Array<{ name: string; annotations?: Record<string, unknown> }> } };
-    const tools = res.result.tools;
-    assert.equal(tools.length, 7);
-    for (const t of tools) {
-      assert.ok(t.annotations, `${t.name} has annotations`);
-      for (const h of HINTS) assert.equal(typeof t.annotations![h], "boolean", `${t.name}.${h} must be an explicit boolean`);
-      assert.equal(typeof t.annotations!.title, "string");
-      assert.equal(t.annotations!.openWorldHint, false, `${t.name} never touches anything outside the project`);
+  test("tools/list declares all four hints as booleans on every tool", async () => {
+    // through a real MCP client (the official SDK), as a host sees the server
+    const { client, close } = await connect();
+    try {
+      const { tools } = await client.listTools();
+      assert.equal(tools.length, 7);
+      for (const t of tools) {
+        assert.ok(t.annotations, `${t.name} has annotations`);
+        for (const h of HINTS) assert.equal(typeof t.annotations![h], "boolean", `${t.name}.${h} must be an explicit boolean`);
+        assert.equal(typeof t.annotations!.title, "string");
+        assert.equal(t.annotations!.openWorldHint, false, `${t.name} never touches anything outside the project`);
+      }
+      assert.equal(client.getServerVersion()?.name, "claimkeeper");
+      assert.equal(client.getInstructions(), INSTRUCTIONS);
+    } finally {
+      await close();
     }
   });
 
@@ -268,9 +276,11 @@ describe("what the agent reads stays small", () => {
     assert.match(text, /ok \(18, wording hidden/);
   });
 
-  test("tool definitions and server instructions stay small", () => {
-    const size = JSON.stringify(TOOLS.map(({ name, description, annotations, inputSchema }) => ({ name, description, annotations, inputSchema }))).length;
-    assert.ok(size < 9000, `tools/list is ${size} bytes`);
+  test("tool definitions and server instructions stay small", async () => {
+    const { client, close } = await connect();
+    const size = JSON.stringify((await client.listTools()).tools).length;
+    await close();
+    assert.ok(size < 10_000, `tools/list is ${size} bytes (the SDK adds about 120 per tool)`);
     assert.ok(INSTRUCTIONS.split(/\s+/).length < 60, "server instructions are one short paragraph");
     assert.doesNotMatch(INSTRUCTIONS, /skill|Claude/i, "instructions work in any MCP client");
   });

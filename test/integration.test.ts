@@ -62,11 +62,13 @@ describe("integration", { skip: !existsSync(CLI) && "run npm run build first" },
     assert.ok(readdirSync(dir).every((f) => !f.endsWith(".tmp") && !f.endsWith(".lock")));
   });
 
-  test("MCP server survives malformed input, handles batches and notifications, hides stacks", async () => {
+  test("MCP server survives malformed input, reports bad arguments as tool errors, hides stacks", async () => {
     const proc = spawn("node", [CLI, "mcp"], { env: { ...process.env, CLAUDE_PROJECT_DIR: root } });
-    const lines: unknown[] = [];
+    const lines: any[] = [];
+    let err = "";
     let buf = "";
     proc.stdout.setEncoding("utf8");
+    proc.stderr.on("data", (d) => (err += d));
     proc.stdout.on("data", (d: string) => {
       buf += d;
       let i: number;
@@ -78,27 +80,33 @@ describe("integration", { skip: !existsSync(CLI) && "run npm run build first" },
     const send = (x: string) => proc.stdin.write(x + "\n");
     send("null");
     send("42");
-    send('{"jsonrpc":"2.0","method":"tools/list"}'); // notification: no reply
-    send('{"jsonrpc":"2.0","id":99,"result":{}}'); // a client response: no reply
-    send('[{"jsonrpc":"2.0","id":1,"method":"ping"},{"jsonrpc":"2.0","method":"notifications/initialized"},{"jsonrpc":"2.0","id":2,"method":"tools/list"}]');
+    send("{not json");
+    send('{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"t","version":"1"}}}');
+    send('{"jsonrpc":"2.0","method":"notifications/initialized"}');
+    send('{"jsonrpc":"2.0","method":"tools/list"}'); // a notification: never answered
     send('{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"claim_get","arguments":{"ids":"local"}}}');
     send('{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"claim_add","arguments":{"id":"local","mentions":[null]}}}');
+    send('{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"no_such_tool","arguments":{}}}');
+    send('{"jsonrpc":"2.0","id":7,"method":"tools/call","params":{"name":"claim_get","arguments":{"bogus":1}}}');
     send('{"jsonrpc":"2.0","id":5,"method":"ping"}');
     await new Promise((r) => setTimeout(r, 1500));
     const exited = new Promise((r) => proc.on("exit", r));
     proc.stdin.end();
     await exited;
 
-    const byId = (id: number) => lines.find((l) => (l as { id?: unknown }).id === id) as any;
-    assert.equal((lines[0] as any).error.code, -32600, "null line → invalid request, server keeps running");
-    assert.equal((lines[1] as any).error.code, -32600);
-    const batch = lines.find(Array.isArray) as any[];
-    assert.deepEqual(batch.map((r) => r.id), [1, 2], "batch answered item by item, notification skipped");
-    assert.ok(!lines.some((l) => (l as any).id === 99), "client responses are not answered");
-    assert.equal(lines.filter((l) => !Array.isArray(l) && (l as any).result?.tools).length, 0, "tools/list notification not answered");
-    assert.match(byId(3).result.content[0].text, /ids must be an array of strings/);
-    assert.match(byId(4).result.content[0].text, /mentions must be an array of objects/);
-    assert.doesNotMatch(JSON.stringify(lines), /\n\s+at /, "no stack traces");
+    const byId = (id: number) => lines.find((l) => l.id === id);
+    const text = (id: number) => byId(id).result.content[0].text as string;
+    assert.equal(byId(1).result.protocolVersion, "2025-06-18", "garbage before the handshake did not break it");
+    assert.equal(lines.filter((l) => l.result?.tools).length, 0, "a tools/list notification is not answered");
+    assert.ok(byId(3).result.isError);
+    assert.match(text(3), /ids/, "a wrong argument type names the argument");
+    assert.ok(byId(4).result.isError);
+    assert.match(text(4), /mentions/);
+    assert.ok(byId(6).result.isError);
+    assert.match(text(6), /no_such_tool/);
+    assert.ok(byId(7).result.isError);
+    assert.match(text(7), /bogus/, "unknown arguments are refused, not ignored");
+    assert.doesNotMatch(JSON.stringify(lines) + err, /\n\s+at /, "no stack traces");
     assert.deepEqual(byId(5).result, {}, "still alive at the end");
   });
 

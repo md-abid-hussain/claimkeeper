@@ -73,7 +73,7 @@ describe("built CLI and MCP server", { skip: !existsSync(CLI) && "run npm run bu
     const list = await call("tools/list");
     assert.deepEqual(list.result.tools.map((t: any) => t.name).sort(), ["claim_add", "claim_get", "claim_update", "claims_check", "claims_config", "claims_in", "output"]);
     const schemaChars = JSON.stringify(list.result.tools).length;
-    assert.ok(schemaChars < 9000, `tool list should stay small, is ${schemaChars} chars`);
+    assert.ok(schemaChars < 10_000, `tool list should stay small, is ${schemaChars} chars`);
 
     const add = await tool("claim_add", {
       id: "fast-summary",

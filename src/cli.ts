@@ -10,7 +10,6 @@ import { defaultRoot, findRoot, projectRoot } from "./core/project.ts";
 import { Store } from "./core/store.ts";
 import { ClaimsError } from "./core/types.ts";
 import { readStdin, runHook } from "./hooks/hooks.ts";
-import { startServer } from "./mcp/server.ts";
 
 const HELP = `claimkeeper — keep product claims consistent across docs, pages, scripts and media
 
@@ -55,9 +54,12 @@ async function main(argv: string[]): Promise<number> {
   if (root) process.env.CLAIMKEEPER_ROOT = resolve(root);
   const [cmd, ...args] = all;
   switch (cmd) {
-    case "mcp":
-      startServer();
+    case "mcp": {
+      // loaded on demand: hooks and CLI commands never pay for the MCP SDK
+      const { startServer } = await import("./mcp/server.ts");
+      await startServer();
       return -1; // keep running
+    }
     case "hook":
       await runHook(args[0] ?? "");
       return 0;

@@ -34,7 +34,7 @@ The agent **never regenerates media on its own**. It tells you what's out of dat
 
 ## Install
 
-Requires Node.js 22 or newer (tested on 22 and 24; development uses 24). No runtime dependencies.
+Requires Node.js 22 or newer (tested on 22 and 24; development uses 24). Installing it pulls in no other packages: the pinned MCP SDK is bundled.
 
 ```bash
 claude plugin marketplace add md-abid-hussain/claimkeeper
@@ -141,7 +141,7 @@ A repo you clone or pull can ship its own `.claims/` folder, so claimkeeper trea
 - **Claim text can't impersonate claimkeeper.** Descriptions, notes and wording are kept on one line, control and bidi characters are removed, and `[claimkeeper]` inside stored text is neutralized.
 - **Secret protections can't be switched off.** A project config can add exclusions, never remove the built-in ones (`.env*`, key files, `secrets/`).
 - **The opt-in debug log redacts** file contents, edits, commands and command output.
-- No runtime dependencies; `npm audit` is clean. Regression tests for each of these live in `test/security.test.ts`.
+- Nothing to install at runtime (the pinned MCP SDK and zod are bundled into `plugin/dist`); `npm audit` is clean. Regression tests for each of these live in `test/security.test.ts`.
 
 ## Privacy
 
@@ -204,11 +204,15 @@ node plugin/dist/cli.js status --root ../my-app   # any command: --root or CLAIM
 
 ```bash
 npm install
-npm test          # builds plugin/dist, runs unit, hook, CLI and MCP tests
+npm test          # typechecks, bundles plugin/dist with esbuild, runs unit, hook, CLI and MCP tests (a real SDK client talks to the server)
+npm run build     # just the bundle: plugin/dist/cli.js plus a lazily loaded chunk holding the MCP SDK
 npm run validate  # claude plugin validate (marketplace + plugin)
+npm pack          # the npm tarball: plugin/ only, about 240 kB, no runtime dependencies
 ```
 
-`src/core` is the deterministic engine, `src/mcp` the stdio MCP server (no SDK), `src/hooks` the Claude Code hooks, `plugin/` what ships (manifest, skills, agents, hooks.json, built `dist/`). Dependencies are pinned to exact versions.
+The SDK and zod are exact-pinned devDependencies that the build bundles into `plugin/dist`, which is committed so a checkout or the plugin runs with plain `node`. Hooks load only the small main file; the SDK chunk is read only for `claimkeeper mcp`.
+
+`src/core` is the deterministic engine, `src/mcp` the stdio MCP server (official MCP SDK), `src/hooks` the Claude Code hooks, `plugin/` what ships (manifest, skills, agents, hooks.json, built `dist/`). Dependencies are pinned to exact versions.
 
 ## License
 

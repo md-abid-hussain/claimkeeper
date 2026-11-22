@@ -13,6 +13,7 @@ import {
   mentionLine,
   outputLine,
 } from "../core/format.ts";
+import * as z from "zod";
 import * as ops from "../core/ops.ts";
 import { defaultRoot, isLinkedWorktree, projectRoot } from "../core/project.ts";
 import { ClaimsError, MENTION_KINDS, type MentionKind, type StopMode } from "../core/types.ts";
@@ -38,7 +39,7 @@ export interface ToolDef {
   name: string;
   description: string;
   annotations: Annotations;
-  inputSchema: Json;
+  inputSchema: Z;
   run(args: Json): string;
 }
 
@@ -49,11 +50,16 @@ const ADDITIVE = { readOnlyHint: false, destructiveHint: false, idempotentHint: 
 /** Can rewrite project text, delete a claim or stop tracking: hosts should confirm. */
 const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false } as const;
 
-const str = (description: string): Json => ({ type: "string", description });
-const num = (description: string): Json => ({ type: "number", description });
-const bool = (description: string): Json => ({ type: "boolean", description });
-const strArr = (description: string): Json => ({ type: "array", items: { type: "string" }, description });
-const obj = (properties: Json, required: string[] = []): Json => ({ type: "object", properties, required, additionalProperties: false });
+// Input schemas are zod: the MCP SDK validates arguments against them and publishes them as JSON Schema.
+// Objects are strict (unknown arguments are an error, as before); fields not listed as required are optional.
+type Z = z.ZodType;
+const str = (description: string) => z.string().describe(description);
+const num = (description: string) => z.number().describe(description);
+const bool = (description: string) => z.boolean().describe(description);
+const strArr = (description: string) => z.array(z.string()).describe(description);
+const en = (values: readonly string[], description?: string) => (description ? z.enum(values).describe(description) : z.enum(values));
+const obj = (properties: Record<string, Z>, required: string[] = []) =>
+  z.strictObject(Object.fromEntries(Object.entries(properties).map(([k, v]) => [k, required.includes(k) ? v : v.optional()])));
 
 function s(args: Json, key: string): string {
   const v = args[key];
@@ -101,7 +107,7 @@ const mentionSchema = obj(
   {
     path: str("File path (or URL for kind url)."),
     anchor: str("Exact wording of the claim in that file, 10-500 chars. Required for text/code."),
-    kind: { type: "string", enum: MENTION_KINDS, description: "Default from extension. text/code/svg: wording; image/audio/video/file: fingerprint; url: meaning only." },
+    kind: en(MENTION_KINDS, "Default from extension. text/code/svg: wording; image/audio/video/file: fingerprint; url: meaning only."),
     line: num("Pick one occurrence when the wording repeats."),
     note: str("Short label, e.g. 'hero headline'."),
     conflict: str("This place CONTRADICTS the claim: say how. Stays flagged until fixed."),
@@ -129,12 +135,12 @@ export const TOOLS: ToolDef[] = [
     annotations: { title: "Set up claim tracking", ...ADDITIVE },
     inputSchema: obj(
       {
-        action: { type: "string", enum: ["init", "status", "set"] },
+        action: en(["init", "status", "set"]),
         share: bool("init: commit the store to git (default true)."),
         enabled: bool("set: automatic checks on/off."),
-        stop: { type: "string", enum: ["block", "warn", "off"], description: "set: end-of-turn check: block (fix or ack first), warn (report), off." },
+        stop: en(["block", "warn", "off"], "set: end-of-turn check: block (fix or ack first), warn (report), off."),
         nudge: bool("set: suggest unregistered mentions in new files."),
-        scope: { type: "string", enum: ["me", "project"] },
+        scope: en(["me", "project"]),
       },
       ["action"],
     ),
@@ -164,7 +170,7 @@ export const TOOLS: ToolDef[] = [
         id: str("lowercase-with-dashes, e.g. 'on-device'."),
         desc: str("One sentence: the meaning every place must agree with. Required for a new claim."),
         keywords: strArr("Words that signal this claim (for spotting unregistered mentions)."),
-        mentions: { type: "array", items: mentionSchema },
+        mentions: z.array(mentionSchema),
       },
       ["id"],
     ),
@@ -186,7 +192,7 @@ export const TOOLS: ToolDef[] = [
     inputSchema: obj({
       ids: strArr("Claim ids (omit to list all)."),
       context: num("Lines of context per text place, 0-10."),
-      view: { type: "string", enum: ["full", "brief"], description: "brief: healthy places by file and id only, no wording (default for claims with more than 8 places). full: all wording." },
+      view: en(["full", "brief"], "brief: healthy places by file and id only, no wording (default for claims with more than 8 places). full: all wording."),
     }),
     run(a) {
       const ids = oarr(a, "ids") ?? [];
@@ -228,19 +234,14 @@ export const TOOLS: ToolDef[] = [
         claim: str("Claim id."),
         desc: str("New meaning (only when the meaning really changes)."),
         revert: num("Bring back this revision's meaning."),
-        decided_by: {
-          type: "string",
-          enum: ["user", "user_request", "agent"],
-          description: "Required with desc/revert. user: they said so. user_request: it follows from what they asked for. agent: your own idea (refused: ask the user first).",
-        },
+        decided_by: en(["user", "user_request", "agent"], "Required with desc/revert. user: they said so. user_request: it follows from what they asked for. agent: your own idea (refused: ask the user first)."),
         why: str("Required with desc/revert: the user's words, or the request the change follows from."),
         remove: bool("Delete the whole claim."),
         accept_all: bool("After the edits: confirm every other place whose wording is still found (changed, moved, code changed) at the current revision. Only after you checked each still says the same thing; places with missing wording or files are left and listed."),
         keywords: strArr("Replace keywords."),
         no_code: str("Why a number in this claim has no code constant (e.g. 'a guideline, not a setting'); \"\" clears it."),
-        edits: {
-          type: "array",
-          items: obj(
+        edits: z.array(
+          obj(
             {
               mention: str("Place id, e.g. m3."),
               text: str("New wording for this place."),
@@ -254,7 +255,7 @@ export const TOOLS: ToolDef[] = [
             },
             ["mention"],
           ),
-        },
+        ),
       },
       ["claim"],
     ),
@@ -297,13 +298,13 @@ export const TOOLS: ToolDef[] = [
     annotations: { title: "Record generated files", ...DESTRUCTIVE },
     inputSchema: obj(
       {
-        action: { type: "string", enum: ["record", "ack", "remove"] },
+        action: en(["record", "ack", "remove"]),
         path: str("record: the generated file."),
         inputs: strArr("record: paths (script, composition, svg, audio), 'claim#m3', or 'out:<id>'."),
         id: str("Output id (record: optional, default from file name; ack/remove: required)."),
-        kind: { type: "string", enum: MENTION_KINDS },
+        kind: en(MENTION_KINDS),
         claims: strArr("record: extra claim ids it expresses."),
-        meta: { type: "object", description: "record: non-secret details (tool, voice, model, composition).", additionalProperties: true },
+        meta: z.record(z.string(), z.unknown()).describe("record: non-secret details (tool, voice, model, composition)."),
         note: str("ack: why it is left as is."),
       },
       ["action"],

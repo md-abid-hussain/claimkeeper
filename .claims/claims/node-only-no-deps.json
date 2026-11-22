@@ -1,12 +1,13 @@
 {
   "id": "node-only-no-deps",
-  "desc": "claimkeeper needs only Node.js 22 or newer: it has no runtime dependencies, and its MCP server is implemented directly without an SDK.",
+  "desc": "claimkeeper needs only Node.js 22 or newer to run: its MCP server uses the official MCP TypeScript SDK, pinned to an exact version and bundled into the shipped code, so installing it pulls in no other packages.",
   "keywords": [
     "node.js",
     "dependencies",
-    "no sdk"
+    "mcp sdk",
+    "bundled"
   ],
-  "rev": 4,
+  "rev": 5,
   "history": [
     {
       "rev": 1,
@@ -29,6 +30,13 @@
       "at": "2026-11-18T15:59:03.461Z",
       "by": "user_request",
       "why": "user feedback: requiring Node 24.22.1+ is a real barrier to adoption, since many projects target Node 22"
+    },
+    {
+      "rev": 5,
+      "desc": "claimkeeper needs only Node.js 22 or newer to run: its MCP server uses the official MCP TypeScript SDK, pinned to an exact version and bundled into the shipped code, so installing it pulls in no other packages.",
+      "at": "2026-11-22T11:41:39.547Z",
+      "by": "user_request",
+      "why": "user: \"upgrade it to the modelcontextprotocol one but like have stable and latest deps and pinned one\" (use the official MCP SDK, pinned)"
     }
   ],
   "mentions": [
@@ -36,37 +44,27 @@
       "id": "m1",
       "kind": "text",
       "path": "README.md",
-      "rev": 4,
-      "anchor": "Requires Node.js 22 or newer (tested on 22 and 24; development uses 24). No runtime dependencies.",
-      "line": 33,
+      "rev": 5,
+      "anchor": "Requires Node.js 22 or newer (tested on 22 and 24; development uses 24). Installing it pulls in no other packages: the pinned MCP SDK is bundled.",
+      "line": 37,
       "note": "Install section"
     },
     {
       "id": "m2",
       "kind": "text",
       "path": "README.md",
-      "rev": 4,
-      "anchor": "`src/mcp` the stdio MCP server (no SDK)",
-      "line": 187,
+      "rev": 5,
+      "anchor": "`src/mcp` the stdio MCP server (official MCP SDK)",
+      "line": 211,
       "note": "Development section"
-    },
-    {
-      "id": "m5",
-      "kind": "code",
-      "path": "src/mcp/server.ts",
-      "rev": 4,
-      "anchor": "Minimal MCP server over stdio (newline-delimited JSON-RPC 2.0). No dependencies.",
-      "line": 1,
-      "block": "03eb81df38ed",
-      "note": "code: MCP server header"
     },
     {
       "id": "m6",
       "kind": "code",
       "path": "package.json",
-      "rev": 4,
+      "rev": 5,
       "anchor": "\"node\": \">=22\"",
-      "line": 14,
+      "line": 20,
       "block": "5cababeb48a2",
       "note": "engines field"
     },
@@ -74,11 +72,31 @@
       "id": "m7",
       "kind": "text",
       "path": "INSTALL.md",
-      "rev": 4,
-      "note": "INSTALL requirements",
+      "rev": 5,
       "anchor": "Node.js 22 or newer (`node --version`)",
-      "line": 9
+      "line": 9,
+      "note": "INSTALL requirements"
+    },
+    {
+      "id": "m8",
+      "kind": "code",
+      "path": "src/mcp/server.ts",
+      "rev": 5,
+      "note": "code: MCP server header",
+      "anchor": "The MCP server: the official TypeScript SDK over stdio.",
+      "line": 2,
+      "block": "8b7875792a8b"
+    },
+    {
+      "id": "m9",
+      "kind": "code",
+      "path": "scripts/build.mjs",
+      "rev": 5,
+      "note": "build bundles the SDK",
+      "anchor": "The MCP SDK and zod are pinned devDependencies bundled into it",
+      "line": 3,
+      "block": "047086939218"
     }
   ],
-  "next": 8
+  "next": 10
 }

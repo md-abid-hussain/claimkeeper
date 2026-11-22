@@ -21,39 +21,39 @@
       "kind": "text",
       "path": "README.md",
       "rev": 1,
-      "note": "README tools",
       "anchor": "Every tool declares all four MCP hints (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`) as explicit booleans.",
-      "line": 160
+      "line": 160,
+      "note": "README tools"
     },
     {
       "id": "m2",
       "kind": "code",
       "path": "src/mcp/tools.ts",
       "rev": 1,
-      "note": "read-only hints",
       "anchor": "const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;",
       "line": 46,
-      "block": "be96226be295"
+      "block": "be96226be295",
+      "note": "read-only hints"
     },
     {
       "id": "m3",
       "kind": "code",
       "path": "src/mcp/tools.ts",
       "rev": 1,
-      "note": "destructive hints",
       "anchor": "const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false } as const;",
       "line": 50,
-      "block": "3de8e2a0267c"
+      "block": "3de8e2a0267c",
+      "note": "destructive hints"
     },
     {
       "id": "m4",
       "kind": "code",
       "path": "test/feedback.test.ts",
       "rev": 1,
-      "note": "hint test",
       "anchor": "test(\"tools/list declares all four hints as booleans on every tool\"",
-      "line": 35,
-      "block": "cf4653070995"
+      "line": 36,
+      "block": "83ac3936db12",
+      "note": "hint test"
     }
   ],
   "next": 5
