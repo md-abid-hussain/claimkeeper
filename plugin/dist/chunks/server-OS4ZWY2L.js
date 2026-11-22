@@ -23569,7 +23569,7 @@ var StdioServerTransport = class {
 // package.json
 var package_default = {
   name: "claimkeeper",
-  version: "0.6.0",
+  version: "0.6.1",
   description: "Keep product claims consistent across docs, landing pages, pitch text, scripts, SVGs, voiceovers and demo videos while coding agents change things.",
   license: "MIT",
   repository: {

@@ -1,11 +1,11 @@
 {
   "id": "version",
-  "desc": "The current claimkeeper version is 0.6.0, the same in the npm package, the plugin manifest and the MCP server.",
+  "desc": "The current claimkeeper version is 0.6.1, the same in the npm package, the plugin manifest and the MCP server.",
   "keywords": [
     "version",
     "release"
   ],
-  "rev": 8,
+  "rev": 9,
   "history": [
     {
       "rev": 1,
@@ -56,6 +56,13 @@
       "at": "2026-11-22T15:44:33.589Z",
       "by": "user",
       "why": "user chose 0.6.0 for the next release"
+    },
+    {
+      "rev": 9,
+      "desc": "The current claimkeeper version is 0.6.1, the same in the npm package, the plugin manifest and the MCP server.",
+      "at": "2026-11-22T16:31:48.291Z",
+      "by": "user",
+      "why": "user chose 0.6.1 for the next release"
     }
   ],
   "mentions": [
@@ -63,41 +70,41 @@
       "id": "m1",
       "kind": "code",
       "path": "package.json",
-      "rev": 8,
-      "anchor": "\"version\": \"0.6.0\"",
+      "rev": 9,
+      "anchor": "\"version\": \"0.6.1\"",
       "line": 3,
-      "block": "6216c346cfec",
+      "block": "6c16c3187189",
       "note": "npm package"
     },
     {
       "id": "m2",
       "kind": "code",
       "path": "plugin/.claude-plugin/plugin.json",
-      "rev": 8,
-      "anchor": "\"version\": \"0.6.0\"",
+      "rev": 9,
+      "anchor": "\"version\": \"0.6.1\"",
       "line": 3,
-      "block": "6216c346cfec",
+      "block": "6c16c3187189",
       "note": "plugin manifest"
     },
     {
       "id": "m4",
       "kind": "code",
       "path": "src/mcp/server.ts",
-      "rev": 8,
-      "note": "MCP serverInfo takes package.json's version",
+      "rev": 9,
       "anchor": "import pkg from \"../../package.json\" with { type: \"json\" };",
       "line": 8,
-      "block": "f8f0d2d18ce6"
+      "block": "f8f0d2d18ce6",
+      "note": "MCP serverInfo takes package.json's version"
     },
     {
       "id": "m5",
       "kind": "code",
       "path": "test/version.test.ts",
-      "rev": 8,
-      "note": "test",
+      "rev": 9,
       "anchor": "test(\"the server reports package.json's version, and the plugin manifest matches it\"",
       "line": 13,
-      "block": "b15d4c15e13c"
+      "block": "b15d4c15e13c",
+      "note": "test"
     }
   ],
   "next": 6
